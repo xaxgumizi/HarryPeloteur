@@ -10,45 +10,13 @@ namespace HarryPeloteur_BL.Controllers
     [RoutePrefix("api")]
     public class GameController : ApiController
     {
-
+        dbController db = new dbController();
         [Route("game/{id}")]
         public HttpResponseMessage GetGame(int id) // https://localhost:44344/api/game/character?id=12
         {
-            var personnage = new Models.CharacterDTO()
-            {
-                id = 52,
-                nom = "Harroux",
-                pv = 5,
-                force = 10.0F,
-                fuite = 3.0F,
-                dexterite = 2.0F,
-                xp = 0,
-                po = 0
-            };
+            var gameinfos = db.getGameInfos(id);
 
-            var partie = new Models.PartieDTO()
-            {
-                id = id,
-                id_personnage = 52,
-                salle_actuelle = 12,
-                difficulte = 0
-            };
-
-            var room = new Models.SalleDTO()
-            {
-                id = 1345,
-                id_partie = id,
-                coordonnees = new int[] { 12, 52 },
-                id_contenu = 2,
-                type_contenu = 3,
-                portes = new int[] { 0, 1, 0, 0 },
-                etat = 0
-            };
-
-            var salles = new List<Models.SalleDTO> { room, room };
-
-
-            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { partie, personnage, salles });
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameinfos });
         }
 
         [Route("games")]
@@ -56,6 +24,33 @@ namespace HarryPeloteur_BL.Controllers
         {
             var liste = new List<Models.PartieDTO> { };
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { liste });
+        }
+
+        [Route("game/{id}")]
+        public HttpResponseMessage PutGame(int id, [FromBody]string command)
+        {
+            System.Diagnostics.Debug.WriteLine(command);
+
+            var LogicHandler = new GameLogic();
+
+            var gameinfos = db.getGameInfos(id);
+            var newgameinfos = new Models.GameInformationDTO();
+
+            string[] parameters = command.Split(' ');
+            if (parameters.Length > 0)
+            {
+                string action = parameters[0];
+                switch (action)
+                {
+                    case "avancer":
+                        newgameinfos = LogicHandler.HandleAvancer(gameinfos, parameters);
+                        break;
+
+                }
+                    
+            }
+
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { newgameinfos });
         }
     }
 }
