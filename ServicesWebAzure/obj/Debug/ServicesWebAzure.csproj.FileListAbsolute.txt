@@ -1,0 +1,7 @@
+C:\Users\hp\source\repos\ServicesWebAzure\ServicesWebAzure\obj\Debug\ServicesWebAzure.csprojAssemblyReference.cache
+C:\Users\hp\source\repos\ServicesWebAzure\ServicesWebAzure\obj\Debug\ServicesWebAzure.csproj.CoreCompileInputs.cache
+C:\Users\hp\source\repos\ServicesWebAzure\ServicesWebAzure\bin\Debug\ServicesWebAzure.exe.config
+C:\Users\hp\source\repos\ServicesWebAzure\ServicesWebAzure\bin\Debug\ServicesWebAzure.exe
+C:\Users\hp\source\repos\ServicesWebAzure\ServicesWebAzure\bin\Debug\ServicesWebAzure.pdb
+C:\Users\hp\source\repos\ServicesWebAzure\ServicesWebAzure\obj\Debug\ServicesWebAzure.exe
+C:\Users\hp\source\repos\ServicesWebAzure\ServicesWebAzure\obj\Debug\ServicesWebAzure.pdb
