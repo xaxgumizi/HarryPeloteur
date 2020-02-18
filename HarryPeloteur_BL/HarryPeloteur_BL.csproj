@@ -156,6 +156,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\dbController.cs" />
+    <Compile Include="Controllers\DebugTools.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\GameLogic.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -165,6 +166,7 @@
     </Compile>
     <Compile Include="Models\CharacterDTO.cs" />
     <Compile Include="Models\GameInformationDTO.cs" />
+    <Compile Include="Models\MonstreDTO.cs" />
     <Compile Include="Models\PartieDTO.cs" />
     <Compile Include="Models\SalleDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

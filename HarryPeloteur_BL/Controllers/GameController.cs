@@ -11,10 +11,13 @@ namespace HarryPeloteur_BL.Controllers
     public class GameController : ApiController
     {
         dbController db = new dbController();
+        DebugTools dt = new DebugTools();
+
         [Route("game/{id}")]
         public HttpResponseMessage GetGame(int id) // https://localhost:44344/api/game/character?id=12
         {
             var gameinfos = db.getGameInfos(id);
+
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameinfos });
         }
@@ -29,28 +32,38 @@ namespace HarryPeloteur_BL.Controllers
         [Route("game/{id}")]
         public HttpResponseMessage PutGame(int id, [FromBody]string command)
         {
-            System.Diagnostics.Debug.WriteLine(command);
+            dt.dbg(command);
 
-            var LogicHandler = new GameLogic();
+            var LogicHandler = new GameLogic(); // La logique du jeu
 
-            var gameinfos = db.getGameInfos(id);
-            var newgameinfos = new Models.GameInformationDTO();
+            var gameinfos = db.getGameInfos(id); // Obtient les informations actuelles sur la partie
 
-            string[] parameters = command.Split(' ');
+            string[] parameters = command.Split(' '); // Parse la commande
             if (parameters.Length > 0)
             {
-                string action = parameters[0];
+                string action = parameters[0]; // Le verbe d'action
                 switch (action)
                 {
-                    case "avancer":
-                        newgameinfos = LogicHandler.HandleAvancer(gameinfos, parameters);
+                    case "avancer": // Gére le déplacement du personnage
+                        LogicHandler.HandleAvancer(gameinfos, parameters);
                         break;
-
+                    case "combattre": // Gére le combat
+                        LogicHandler.HandleCombattre(gameinfos, parameters);
+                        break;
+                    case "fuir": // Gére la fuite
+                        LogicHandler.HandleFuir(gameinfos, parameters);
+                        break;
+                    case null:
+                        dt.dbg("Commande non reconnue");
+                        break;
                 }
                     
             }
 
-            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { newgameinfos });
+            gameinfos = db.getGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
+
+
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameinfos });
         }
     }
 }

@@ -8,12 +8,13 @@ namespace HarryPeloteur_BL.Models
     public class CharacterDTO
     {
         public int id { get; set; }
+        public int salle_actuelle { get; set; }
         public string nom { get; set; }
 
         public int pv { get; set; }
-        public float force { get; set; }
-        public float fuite { get; set; }
-        public float dexterite { get; set; }
+        public int force { get; set; }
+        public int fuite { get; set; }
+        public int dexterite { get; set; }
         public int xp { get; set; }
         public int po { get; set; }
 

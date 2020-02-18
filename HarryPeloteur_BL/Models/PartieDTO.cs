@@ -11,7 +11,6 @@ namespace HarryPeloteur_BL.Models
 
         public int id_personnage { get; set; }
 
-        public int salle_actuelle { get; set; }
         public int difficulte { get; set; }
     }
 }
