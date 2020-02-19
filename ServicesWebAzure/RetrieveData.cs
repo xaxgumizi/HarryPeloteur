@@ -48,7 +48,7 @@ namespace ServicesWebAzure
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection con = new SqlConnection(conString);
             con.Open();
-            string q = "update personne set Nom =" + p.Nom +" ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po + " where Id=" + p.Id;
+            string q = "update personne set Nom =" + p.Nom +" ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po+", salle_actuelle="+p.salle_actuelle + " where Id=" + p.Id;
             SqlCommand cmd = new SqlCommand(q, con);
             cmd.ExecuteNonQuery();
             con.Close();
@@ -112,6 +112,7 @@ namespace ServicesWebAzure
                 personne.Fuite = (int)reader.GetValue(5);
                 personne.Xp = (int)reader.GetValue(6);
                 personne.Po = (int)reader.GetValue(7);
+                personne.salle_actuelle = (int)reader.GetValue(8);
             }
 
             Console.WriteLine(personne.Id);
@@ -137,7 +138,6 @@ namespace ServicesWebAzure
             {
                 partie.Id = (int)reader.GetValue(0);
                 partie.Id_personnage = (int)reader.GetValue(1);
-                partie.Salle_actuelle = (int)reader.GetValue(2);
                 partie.Difficulte = (int)reader.GetValue(3);
 
             }

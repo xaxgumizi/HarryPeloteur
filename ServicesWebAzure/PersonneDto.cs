@@ -15,6 +15,8 @@ namespace ServicesWebAzure
         public float Fuite { get; set; }
         public float Dexterite { get; set; }
         public int Xp { get; set; }
-        public int Po { get; set; } 
+        public int Po { get; set; }
+        public int salle_actuelle { get; set; }
+
     }
 }
