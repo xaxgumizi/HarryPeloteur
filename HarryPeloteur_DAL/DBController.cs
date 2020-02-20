@@ -126,7 +126,7 @@ namespace HarryPeloteur_DAL
 
         }
 
-        public PartieDTO getPartie(int id)
+        public PartieDTO GetPartie(int id)
         {
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection con = new SqlConnection(conString);
@@ -152,7 +152,7 @@ namespace HarryPeloteur_DAL
             con.Close();
             return (partie);
         }
-        public string getTexte(int type)
+        public string GetTexte(int type)
         {
             //string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             //SqlConnection con = new SqlConnection(conString);
