@@ -9,6 +9,7 @@ namespace HarryPeloteur_DAL
     public class PersonneDTO
     {
         public int Id { get; set; }
+        public int SalleActuelle { get; set; }
         public string Nom { get; set; }
         public int Pv { get; set; }
         public float Force { get; set; }

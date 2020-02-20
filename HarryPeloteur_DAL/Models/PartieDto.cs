@@ -10,7 +10,6 @@ namespace HarryPeloteur_DAL
     {
         public int Id { get; set; }
         public int Id_personnage { get; set; }
-        public int Salle_actuelle { get; set; }
         public int Difficulte { get; set; }
     }
 }

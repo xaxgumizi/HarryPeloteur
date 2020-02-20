@@ -39,7 +39,7 @@ namespace HarryPeloteur_BL.Controllers
 
             var LogicHandler = new GameLogic(); // La logique du jeu
 
-            var gameinfos = db.getGameInfos(id); // Obtient les informations actuelles sur la partie
+            var gameinfos = db.GetGameInfos(id); // Obtient les informations actuelles sur la partie
 
             string[] parameters = command.Split(' '); // Parse la commande
             if (parameters.Length > 0)
@@ -66,7 +66,7 @@ namespace HarryPeloteur_BL.Controllers
                     
             }
 
-            gameinfos = db.getGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
+            gameinfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
 
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameinfos });
