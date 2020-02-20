@@ -50,22 +50,22 @@ namespace HarryPeloteur_BL.Controllers
                     return;
             }
 
-            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
+            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
             // Si on est face à un monstre non combattu on ne peut pas simplement partir
-            if (currentRoom.type_contenu == 2 && currentRoom.etat == 0)
+            if (currentRoom.TypeContenu == 2 && currentRoom.Etat == 0)
             {
                 dt.dbg("Mode combat déplacement impossible");
                 return;
             }
 
-            // Si il faut tirer une direction au hasard, pour une fuite par exemple
+            // Si il faut tirer une direction au hasard, pour une Fuite par exemple
             if (direction == 4)
             {
                 dt.dbg("Salle aléatoire");
-                //var candidates = currentRoom.portes.Where(x => x == 1).ToArray();
-                // On cherche toutes les portes de la salle
+                //var candidates = currentRoom.Portes.Where(x => x == 1).ToArray();
+                // On cherche toutes les Portes de la salle
                 List<int> candidates = new List<int>();
-                foreach (var item in currentRoom.portes.Select((value, i) => (value, i)))
+                foreach (var item in currentRoom.Portes.Select((value, i) => (value, i)))
                 {
                     if (item.value == 1)
                     {
@@ -81,11 +81,11 @@ namespace HarryPeloteur_BL.Controllers
             }
 
             // Si il y a une porte là ou on veut aller
-            if (currentRoom.portes[direction] == 1)
+            if (currentRoom.Portes[direction] == 1)
             {
                 int[] currentcoordinates = { 0, 0 };
-                currentcoordinates[0] = currentRoom.coordonnees[0];
-                currentcoordinates[1] = currentRoom.coordonnees[1];
+                currentcoordinates[0] = currentRoom.Coordonnees[0];
+                currentcoordinates[1] = currentRoom.Coordonnees[1];
 
 
                 switch (direction)
@@ -104,11 +104,11 @@ namespace HarryPeloteur_BL.Controllers
                         break;
                 }
 
-                HarryPeloteur_DAL.SalleDTO existingroom = FindRoomByCoordinates(gameInfos.rooms, currentcoordinates); // Cherche une salle au nouvel emplacement
+                HarryPeloteur_DAL.SalleDTO existingroom = FindRoomByCoordinates(gameInfos.Rooms, currentcoordinates); // Cherche une salle au nouvel emplacement
                 if (existingroom != null) // Si il existe déjà une salle à cet emplacement
                 {
                     dt.dbg("La salle existe pour le déplacement");
-                    gameInfos.character.salle_actuelle = existingroom.id; // Alors on déplace juste le personnage dedans
+                    gameInfos.Character.SalleActuelle = existingroom.Id; // Alors on déplace juste le personnage dedans
                 }
                 else // Sinon on doit générer une nouvelle salle
                 {
@@ -118,24 +118,24 @@ namespace HarryPeloteur_BL.Controllers
 
                     HarryPeloteur_DAL.SalleDTO newroom = GenerateNewRoom();
 
-                    newroom.id_partie = gameInfos.game.id; // On assigne l'id de la partie et ses nouvelles coordonnées
-                    newroom.coordonnees = currentcoordinates;
+                    newroom.IdPartie = gameInfos.Game.Id; // On assigne l'Id de la partie et ses nouvelles coordonnées
+                    newroom.Coordonnees = currentcoordinates;
                     // On place la porte pour retourner de là où on vient
-                    newroom.portes[oppposingDirections[direction]] = 1;
+                    newroom.Portes[oppposingDirections[direction]] = 1;
 
                     // On insère dans la BDD la nouvelle salle
                     db.InsertRoom(newroom);
 
-                    // On récupère de nouveau les salles pour avoir l'id de la salle que l'on vient d'insérer
-                    gameInfos.rooms = db.GetRoom(gameInfos.game.id);
-                    // On considère que les résultats sont triés par id croissant, donc on prend la dernière salle
-                    int newRoomId = gameInfos.rooms.Last().id;
+                    // On récupère de nouveau les salles pour avoir l'Id de la salle que l'on vient d'insérer
+                    gameInfos.Rooms = db.GetRoom(gameInfos.Game.Id);
+                    // On considère que les résultats sont triés par Id croissant, donc on prend la dernière salle
+                    int newRoomId = gameInfos.Rooms.Last().Id;
 
                     // On déplace le personnage dans la nouvelle salle
-                    gameInfos.character.salle_actuelle = newRoomId;
+                    gameInfos.Character.SalleActuelle = newRoomId;
                 }
 
-                db.UpdateCharacter(gameInfos.character); // On met à jour dans la BDD le personnage
+                db.UpdateCharacter(gameInfos.Character); // On met à jour dans la BDD le personnage
             }
             else // Sinon on ne peut pas aller là
             {
@@ -144,13 +144,13 @@ namespace HarryPeloteur_BL.Controllers
             }
         }
 
-        public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> rooms, int id)
+        public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> Rooms, int Id)
         {
             HarryPeloteur_DAL.SalleDTO found = null;
             int index = 0;
-            foreach (var room in rooms.Select((value, i) => (value, i)))
+            foreach (var room in Rooms.Select((value, i) => (value, i)))
             {
-                if (room.value.id == id)
+                if (room.value.Id == Id)
                 {
                     found = room.value;
                     index = room.i;
@@ -160,17 +160,17 @@ namespace HarryPeloteur_BL.Controllers
             return new { found, index };
         }
 
-        public HarryPeloteur_DAL.SalleDTO FindRoomByCoordinates(List<HarryPeloteur_DAL.SalleDTO> rooms, int[] coordinates)
+        public HarryPeloteur_DAL.SalleDTO FindRoomByCoordinates(List<HarryPeloteur_DAL.SalleDTO> Rooms, int[] coordinates)
         {
             dt.dbg("Call to find room by coordinates");
             HarryPeloteur_DAL.SalleDTO found = null;
 
             //dt.PrintArray(coordinates);
 
-            foreach (HarryPeloteur_DAL.SalleDTO room in rooms)
+            foreach (HarryPeloteur_DAL.SalleDTO room in Rooms)
             {
-                //dt.PrintArray(room.coordonnees);
-                if (room.coordonnees[0] == coordinates[0] && room.coordonnees[1] == coordinates[1])
+                //dt.PrintArray(room.Coordonnees);
+                if (room.Coordonnees[0] == coordinates[0] && room.Coordonnees[1] == coordinates[1])
                 {
                     found = room;
                     break;
@@ -194,7 +194,7 @@ namespace HarryPeloteur_BL.Controllers
                     contentId = 0;
                     break;
                 case 1: // Il y a un objet
-                    var randomObject = new LoadedDie(new int[] { 20, 10, 10, 10, 10, 5, 20, 10, 5 }); // regagne 25% de la vie, regagne 50% de la vie, augmente 10% de force, augmente de 10% la fuite, augmente de 10% la dexterité, augmente de 10% les PV, 10PO, 50PO, 100PO
+                    var randomObject = new LoadedDie(new int[] { 20, 10, 10, 10, 10, 5, 20, 10, 5 }); // regagne 25% de la vie, regagne 50% de la vie, augmente 10% de Force, augmente de 10% la Fuite, augmente de 10% la dexterité, augmente de 10% les PV, 10PO, 50PO, 100PO
                     contentId = randomObject.Next();
                     break;
                 case 2: // Il y a un monstre
@@ -205,17 +205,17 @@ namespace HarryPeloteur_BL.Controllers
 
             var room = new HarryPeloteur_DAL.SalleDTO()
             {
-                id = 0,
-                id_partie = 0,
-                coordonnees = new int[] { 0, 0 },
-                id_contenu = contentId,
-                type_contenu = contentType,
-                portes = new int[] { // Chaque porte a 50% de chance d'être présente
+                Id = 0,
+                IdPartie = 0,
+                Coordonnees = new int[] { 0, 0 },
+                IdContenu = contentId,
+                TypeContenu = contentType,
+                Portes = new int[] { // Chaque porte a 50% de chance d'être présente
                     rnd.Next(0,2),
                     rnd.Next(0,2),
                     rnd.Next(0,2),
                     rnd.Next(0,2) },
-                etat = 0
+                Etat = 0
             };
 
             return room;
@@ -223,33 +223,33 @@ namespace HarryPeloteur_BL.Controllers
 
         public void HandleCombattre(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] paramaters)
         {
-            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
+            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
 
-            if(currentRoom.type_contenu != 2)
+            if(currentRoom.TypeContenu != 2)
             {
                 dt.dbg("Impossible de combattre dans une salle sans monstres");
                 return;
             }
 
-            HarryPeloteur_DAL.MonstreDTO currentMonster = db.getMonster(currentRoom.id_contenu);
+            HarryPeloteur_DAL.MonstreDTO currentMonster = db.GetMonster(currentRoom.IdContenu);
 
             // On détermine les chances de toucher en fonction de la dextérité
-            //double playerHitChance = 0.5 * Math.Pow((double)gameInfos.character.dexterite / (double)currentMonster.Dexterite, 2);
-            double playerHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)gameInfos.character.dexterite - (double)currentMonster.Dexterite) / (double)currentMonster.Dexterite));
-            double monsterHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)currentMonster.Dexterite - (double)gameInfos.character.dexterite) / (double)gameInfos.character.dexterite));
+            //double playerHitChance = 0.5 * Math.Pow((double)gameInfos.Character.Dexterite / (double)currentMonster.Dexterite, 2);
+            double playerHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)gameInfos.Character.Dexterite - (double)currentMonster.Dexterite) / (double)currentMonster.Dexterite));
+            double monsterHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)currentMonster.Dexterite - (double)gameInfos.Character.Dexterite) / (double)gameInfos.Character.Dexterite));
             // ajouter une fonction pour faire ça
             // diviser par deux l'augmentation de la chance ?
             // mettre un plafond de 90%
             dt.VarDump(currentMonster);
-            dt.dbg(gameInfos.character.dexterite.ToString());
+            dt.dbg(gameInfos.Character.Dexterite.ToString());
             dt.dbg(currentMonster.Dexterite.ToString());
-            dt.dbg((gameInfos.character.dexterite / currentMonster.Dexterite).ToString());
+            dt.dbg((gameInfos.Character.Dexterite / currentMonster.Dexterite).ToString());
             dt.dbg("Chances de toucher du joueur " + playerHitChance.ToString());
             dt.dbg("Chances de toucher du monstre " + monsterHitChance.ToString());
 
             // Tant que le joueur et le monstre sont en vie on combat
             // C'est un combat à mort
-            while (gameInfos.character.pv > 0 && currentMonster.Pv > 0)
+            while (gameInfos.Character.Pv > 0 && currentMonster.Pv > 0)
             {
                 // Le joueur commence
                 // Mettre la personne qui ouvre le combat en aléatoire ?
@@ -258,7 +258,7 @@ namespace HarryPeloteur_BL.Controllers
                 if(draw < playerHitChance)
                 {
                     dt.dbg("Le joueur a touché le monstre");
-                    currentMonster.Pv -= gameInfos.character.force;
+                    currentMonster.Pv -= gameInfos.Character.Force;
                 }
 
                 // Au tour du monstre
@@ -267,12 +267,12 @@ namespace HarryPeloteur_BL.Controllers
                 if(draw < monsterHitChance)
                 {
                     dt.dbg("Le monstre a touché le joueur");
-                    gameInfos.character.pv -= currentMonster.Force;
+                    gameInfos.Character.Pv -= currentMonster.Force;
                 }
                 
             }
 
-            if(gameInfos.character.pv <= 0)
+            if(gameInfos.Character.Pv <= 0)
             {
                 dt.dbg("Le joueur est mort tué par un " + currentMonster.Nom);
             }
@@ -282,36 +282,36 @@ namespace HarryPeloteur_BL.Controllers
             }
 
             // On met à jour la vie du joueur
-            db.UpdateCharacter(gameInfos.character);
+            db.UpdateCharacter(gameInfos.Character);
         }
 
         public void HandleFuir(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
-            var roomSearch = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle);
+            var roomSearch = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle);
             HarryPeloteur_DAL.SalleDTO currentRoom = roomSearch.found;
             int currentRoomID = roomSearch.index;
 
             // Si la salle actuelle ne contient pas de monstre on annule l'action
-            if (currentRoom.type_contenu != 2)
+            if (currentRoom.TypeContenu != 2)
             {
                 dt.dbg("Impossible de fuir une salle sans monstres");
                 return;
             }
 
             // On obtient le monstre dans la salle actuelle
-            var currentMonster = db.getMonster(currentRoom.id_contenu);
+            var currentMonster = db.GetMonster(currentRoom.IdContenu);
 
             // Calcule la chance de s'échapper selon les caractéristiques du joueur et du monstre avec un minimum de 20%
-            var escapeChance = Math.Max(0.20, (gameInfos.character.fuite - currentMonster.Dexterite)/gameInfos.character.fuite);
+            var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite)/gameInfos.Character.Fuite);
             
-            while(gameInfos.character.pv > 0)
+            while(gameInfos.Character.Pv > 0)
             {
                 // Si on n'a pas réussi à s'échapper
                 if (rnd.NextDouble() > escapeChance)
                 {
                     dt.dbg("Le joueur n'as pas réussi à s'échapper");
                     // Alors le joueur prend des dégats
-                    gameInfos.character.pv -= currentMonster.Force;
+                    gameInfos.Character.Pv -= currentMonster.Force;
                 }
                 else
                 {
@@ -319,32 +319,32 @@ namespace HarryPeloteur_BL.Controllers
                     // Sinon on sort vers une salle aléatoire
 
                     // modifier l'état de la salle actuelle vers un état intermédiaire pour passer le check dans le handleavancer
-                    gameInfos.rooms[currentRoomID].etat = 2;
+                    gameInfos.Rooms[currentRoomID].Etat = 2;
                     HandleAvancer(gameInfos, new string[] { "", "random" });
 
                     // Met à jour les données du personnage après l'avoir déplacé
-                    //gameInfos = db.getGameInfos(gameInfos.game.id);
-                    gameInfos.character = db.getCharacter(gameInfos.character.id);
-                    //dt.VarDump(gameInfos.character);
+                    //gameInfos = db.getGameInfos(gameInfos.Game.Id);
+                    gameInfos.Character = db.GetPersonne(gameInfos.Character.Id);
+                    //dt.VarDump(gameInfos.Character);
 
                     break;
                 }
             }
             // Met à jour la vie du personnage
-            db.UpdateCharacter(gameInfos.character);
+            db.UpdateCharacter(gameInfos.Character);
         }
 
         public void HandleRamasser(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
-            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
+            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
 
-            if (currentRoom.type_contenu != 1)
+            if (currentRoom.TypeContenu != 1)
             {
                 dt.dbg("Pas d'objet à ramasser dans la salle !");
                 return;
             }
 
-            HarryPeloteur_DAL.ObjetDTO currentObject = db.getObject(currentRoom.id_contenu);
+            HarryPeloteur_DAL.ObjetDTO currentObject = db.GetObjet(currentRoom.IdContenu);
 
             
 

@@ -72,7 +72,6 @@ namespace HarryPeloteur_DAL
             SalleDTO salle = new SalleDTO();
 
             while (reader.Read())
-
             {
                 salle.Id = (int)reader.GetValue(0);
                 salle.coordonneeX = (int)reader.GetValue(1);
@@ -140,7 +139,7 @@ namespace HarryPeloteur_DAL
 
             {
                 partie.Id = (int)reader.GetValue(0);
-                partie.Id_personnage = (int)reader.GetValue(1);
+                partie.IdPersonnage = (int)reader.GetValue(1);
                 partie.Salle_actuelle = (int)reader.GetValue(2);
                 partie.Difficulte = (int)reader.GetValue(3);
 
