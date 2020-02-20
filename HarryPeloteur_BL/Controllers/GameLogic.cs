@@ -346,7 +346,26 @@ namespace HarryPeloteur_BL.Controllers
 
             HarryPeloteur_DAL.ObjetDTO currentObject = db.GetObjet(currentRoom.IdContenu);
 
-            
+            switch (currentObject.ProprieteCible)
+            {
+                case "pv":
+                    gameInfos.Character.Pv += currentObject.Montant;
+                    break;
+                case "force":
+                    gameInfos.Character.Force += currentObject.Montant;
+                    break;
+                case "fuite":
+                    gameInfos.Character.Fuite += currentObject.Montant;
+                    break;
+                case "dexterite":
+                    gameInfos.Character.Dexterite += currentObject.Montant;
+                    break;
+                case "po":
+                    gameInfos.Character.Po += currentObject.Montant;
+                    break;
+            }
+
+            db.UpdatePersonne(gameInfos.Character);
 
         }
 

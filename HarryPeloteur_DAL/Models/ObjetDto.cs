@@ -12,6 +12,6 @@ namespace HarryPeloteur_DAL
         public string Nom { get; set; }
         public string Description { get; set; }
         public string ProprieteCible { get; set; }
-        public Nullable<int> Montant { get; set; }
+        public int Montant { get; set; }
     }
 }
