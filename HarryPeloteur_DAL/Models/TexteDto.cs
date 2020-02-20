@@ -9,7 +9,7 @@ namespace HarryPeloteur_DAL
    public class TexteDTO
     {
         public int Id { get; set; }
-        public string type { get; set; }
-        public string contenu { get; set; }
+        public string Type { get; set; }
+        public string Contenu { get; set; }
     }
 }

@@ -9,9 +9,9 @@ namespace HarryPeloteur_DAL
     public class ObjetDTO
     {
         public int Id { get; set; }
-        public string nom { get; set; }
-        public string description { get; set; }
-        public string propriete_cible { get; set; }
-        public Nullable<int> montant { get; set; }
+        public string Nom { get; set; }
+        public string Description { get; set; }
+        public string ProprieteCible { get; set; }
+        public Nullable<int> Montant { get; set; }
     }
 }

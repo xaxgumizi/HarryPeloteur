@@ -8,8 +8,8 @@ namespace HarryPeloteur_DAL
 {
     public class GameInformationDTO
     {
-        public PartieDTO game { get; set; }
-        public PersonneDTO character { get; set; }
-        public List<SalleDTO> rooms { get; set; }
+        public PartieDTO Game { get; set; }
+        public PersonneDTO Character { get; set; }
+        public List<SalleDTO> Rooms { get; set; }
     }
 }

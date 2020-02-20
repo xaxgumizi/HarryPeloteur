@@ -15,8 +15,8 @@ namespace HarryPeloteur_DAL
         public float Fuite { get; set; }
         public float Dexterite { get; set; }
 
-        public int Drop_xp { get; set; }
-        public int Drop_argent { get; set; }
-        public float Proba_drop_argent { get; set; }
+        public int DropXp { get; set; }
+        public int DropArgent { get; set; }
+        public float ProbaDropArgent { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace HarryPeloteur_DAL
     public class PartieDTO
     {
         public int Id { get; set; }
-        public int Id_personnage { get; set; }
+        public int IdPersonnage { get; set; }
         public int Difficulte { get; set; }
     }
 }
