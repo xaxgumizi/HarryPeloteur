@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HarryPeloteur_DAL
 {
-   public class TexteDto
+   public class TexteDTO
     {
         public int Id { get; set; }
         public string type { get; set; }

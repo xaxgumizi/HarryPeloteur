@@ -27,7 +27,7 @@ namespace HarryPeloteur_BL.Controllers
         [Route("games")]
         public HttpResponseMessage GetGames()
         {
-            var liste = new List<Models.PartieDTO> { };
+            var liste = new List<HarryPeloteur_DAL.PartieDTO> { };
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { liste });
         }
 
@@ -54,6 +54,9 @@ namespace HarryPeloteur_BL.Controllers
                         break;
                     case "fuir": // Gére la fuite
                         LogicHandler.HandleFuir(gameinfos, parameters);
+                        break;
+                    case "ramasser": // Gère le fait de ramasser un objet
+                        LogicHandler.HandleRamasser(gameinfos, parameters);
                         break;
                     case null:
                         dt.dbg("Commande non reconnue");

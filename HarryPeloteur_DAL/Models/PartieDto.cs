@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HarryPeloteur_DAL
 {
-    public class PartieDto
+    public class PartieDTO
     {
         public int Id { get; set; }
         public int Id_personnage { get; set; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using HarryPeloteur_DAL;
 
 
 namespace HarryPeloteur_BL.Controllers
@@ -9,8 +10,9 @@ namespace HarryPeloteur_BL.Controllers
     public class GameLogic
     {
         Random rnd = new Random();
-        dbController db = new dbController();
+        //dbController db = new dbController();
         DebugTools dt = new DebugTools();
+        HarryPeloteur_DAL.DBController db = new DBController();
 
         // Ordre des instructions
         // Récupérer les infos depuis BDD
@@ -19,7 +21,7 @@ namespace HarryPeloteur_BL.Controllers
         // Obligé car on ne connait pas le nouvel ID dans la BDD avant l'insertion
         // On redemande les infos depuis la BDD
 
-        public void HandleAvancer(Models.GameInformationDTO gameInfos, string[] parameters)
+        public void HandleAvancer(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
             dt.dbg("Call to avancer");
             if(parameters.Count() < 2)
@@ -48,7 +50,7 @@ namespace HarryPeloteur_BL.Controllers
                     return;
             }
 
-            Models.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
+            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
             // Si on est face à un monstre non combattu on ne peut pas simplement partir
             if (currentRoom.type_contenu == 2 && currentRoom.etat == 0)
             {
@@ -102,7 +104,7 @@ namespace HarryPeloteur_BL.Controllers
                         break;
                 }
 
-                Models.SalleDTO existingroom = FindRoomByCoordinates(gameInfos.rooms, currentcoordinates); // Cherche une salle au nouvel emplacement
+                HarryPeloteur_DAL.SalleDTO existingroom = FindRoomByCoordinates(gameInfos.rooms, currentcoordinates); // Cherche une salle au nouvel emplacement
                 if (existingroom != null) // Si il existe déjà une salle à cet emplacement
                 {
                     dt.dbg("La salle existe pour le déplacement");
@@ -114,7 +116,7 @@ namespace HarryPeloteur_BL.Controllers
                     // La porte opposée de celle d'où l'on vient
                     int[] oppposingDirections = { 2, 3, 0, 1 };
 
-                    Models.SalleDTO newroom = GenerateNewRoom();
+                    HarryPeloteur_DAL.SalleDTO newroom = GenerateNewRoom();
 
                     newroom.id_partie = gameInfos.game.id; // On assigne l'id de la partie et ses nouvelles coordonnées
                     newroom.coordonnees = currentcoordinates;
@@ -122,10 +124,10 @@ namespace HarryPeloteur_BL.Controllers
                     newroom.portes[oppposingDirections[direction]] = 1;
 
                     // On insère dans la BDD la nouvelle salle
-                    db.insertRoom(newroom);
+                    db.InsertRoom(newroom);
 
                     // On récupère de nouveau les salles pour avoir l'id de la salle que l'on vient d'insérer
-                    gameInfos.rooms = db.getRoom(gameInfos.game.id);
+                    gameInfos.rooms = db.GetRoom(gameInfos.game.id);
                     // On considère que les résultats sont triés par id croissant, donc on prend la dernière salle
                     int newRoomId = gameInfos.rooms.Last().id;
 
@@ -133,7 +135,7 @@ namespace HarryPeloteur_BL.Controllers
                     gameInfos.character.salle_actuelle = newRoomId;
                 }
 
-                db.updateCharacter(gameInfos.character); // On met à jour dans la BDD le personnage
+                db.UpdateCharacter(gameInfos.character); // On met à jour dans la BDD le personnage
             }
             else // Sinon on ne peut pas aller là
             {
@@ -142,9 +144,9 @@ namespace HarryPeloteur_BL.Controllers
             }
         }
 
-        public dynamic FindRoomById(List<Models.SalleDTO> rooms, int id)
+        public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> rooms, int id)
         {
-            Models.SalleDTO found = null;
+            HarryPeloteur_DAL.SalleDTO found = null;
             int index = 0;
             foreach (var room in rooms.Select((value, i) => (value, i)))
             {
@@ -158,14 +160,14 @@ namespace HarryPeloteur_BL.Controllers
             return new { found, index };
         }
 
-        public Models.SalleDTO FindRoomByCoordinates(List<Models.SalleDTO> rooms, int[] coordinates)
+        public HarryPeloteur_DAL.SalleDTO FindRoomByCoordinates(List<HarryPeloteur_DAL.SalleDTO> rooms, int[] coordinates)
         {
             dt.dbg("Call to find room by coordinates");
-            Models.SalleDTO found = null;
+            HarryPeloteur_DAL.SalleDTO found = null;
 
             //dt.PrintArray(coordinates);
 
-            foreach (Models.SalleDTO room in rooms)
+            foreach (HarryPeloteur_DAL.SalleDTO room in rooms)
             {
                 //dt.PrintArray(room.coordonnees);
                 if (room.coordonnees[0] == coordinates[0] && room.coordonnees[1] == coordinates[1])
@@ -180,7 +182,7 @@ namespace HarryPeloteur_BL.Controllers
         
         /* Génère une nouvelle salle avec des attributs aléatoires
          */
-        public Models.SalleDTO GenerateNewRoom()
+        public HarryPeloteur_DAL.SalleDTO GenerateNewRoom()
         {
             var randomContentTypeGenerator = new LoadedDie(new int[] { 50, 25, 25 }); // 50% rien, 25% objet, 25% monstre
             var contentType = randomContentTypeGenerator.Next();
@@ -201,7 +203,7 @@ namespace HarryPeloteur_BL.Controllers
                     break;
             }
 
-            var room = new Models.SalleDTO()
+            var room = new HarryPeloteur_DAL.SalleDTO()
             {
                 id = 0,
                 id_partie = 0,
@@ -219,9 +221,9 @@ namespace HarryPeloteur_BL.Controllers
             return room;
         }
 
-        public void HandleCombattre(Models.GameInformationDTO gameInfos, string[] paramaters)
+        public void HandleCombattre(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] paramaters)
         {
-            Models.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
+            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
 
             if(currentRoom.type_contenu != 2)
             {
@@ -229,7 +231,7 @@ namespace HarryPeloteur_BL.Controllers
                 return;
             }
 
-            Models.MonstreDTO currentMonster = db.getMonster(currentRoom.id_contenu);
+            HarryPeloteur_DAL.MonstreDTO currentMonster = db.getMonster(currentRoom.id_contenu);
 
             // On détermine les chances de toucher en fonction de la dextérité
             //double playerHitChance = 0.5 * Math.Pow((double)gameInfos.character.dexterite / (double)currentMonster.Dexterite, 2);
@@ -280,13 +282,13 @@ namespace HarryPeloteur_BL.Controllers
             }
 
             // On met à jour la vie du joueur
-            db.updateCharacter(gameInfos.character);
+            db.UpdateCharacter(gameInfos.character);
         }
 
-        public void HandleFuir(Models.GameInformationDTO gameInfos, string[] parameters)
+        public void HandleFuir(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
             var roomSearch = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle);
-            Models.SalleDTO currentRoom = roomSearch.found;
+            HarryPeloteur_DAL.SalleDTO currentRoom = roomSearch.found;
             int currentRoomID = roomSearch.index;
 
             // Si la salle actuelle ne contient pas de monstre on annule l'action
@@ -329,10 +331,26 @@ namespace HarryPeloteur_BL.Controllers
                 }
             }
             // Met à jour la vie du personnage
-            db.updateCharacter(gameInfos.character);
+            db.UpdateCharacter(gameInfos.character);
         }
 
-       
+        public void HandleRamasser(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
+        {
+            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.rooms, gameInfos.character.salle_actuelle).found;
+
+            if (currentRoom.type_contenu != 1)
+            {
+                dt.dbg("Pas d'objet à ramasser dans la salle !");
+                return;
+            }
+
+            HarryPeloteur_DAL.ObjetDTO currentObject = db.getObject(currentRoom.id_contenu);
+
+            
+
+        }
+
+
     }
 
     public class LoadedDie

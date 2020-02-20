@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HarryPeloteur_DAL
 {
-    public class SalleDto
+    public class SalleDTO
     {
         public int Id { get; set; }
         public Nullable<int> coordonneeX { get; set; }
@@ -17,6 +17,6 @@ namespace HarryPeloteur_DAL
         public Nullable<int> etat { get; set; }
         public Nullable<int> id_partie { get; set; }
 
-        public virtual PartieDto PartieDto { get; set; }
+        public virtual PartieDTO PartieDto { get; set; }
     }
 }
