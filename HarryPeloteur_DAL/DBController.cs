@@ -182,5 +182,9 @@ namespace HarryPeloteur_DAL
             return new ObjetDTO();
         }
 
+        public GameInformationDTO GetGameInfos(int id)
+        {
+            return new GameInformationDTO();
+        }
     }
 }

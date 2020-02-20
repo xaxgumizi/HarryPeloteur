@@ -11,14 +11,15 @@ namespace HarryPeloteur_BL.Controllers
     [RoutePrefix("api")]
     public class GameController : ApiController
     {
-        dbController db = new dbController();
+        //dbController db = new dbController();
         DebugTools dt = new DebugTools();
         DBController woaw = new DBController();
+        HarryPeloteur_DAL.DBController db = new HarryPeloteur_DAL.DBController();
         
         [Route("game/{id}")]
         public HttpResponseMessage GetGame(int id) // https://localhost:44344/api/game/character?id=12
         {
-            var gameinfos = db.getGameInfos(id);
+            var gameinfos = db.GetGameInfos(id);
             
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameinfos });
