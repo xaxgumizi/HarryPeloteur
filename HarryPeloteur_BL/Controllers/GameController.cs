@@ -37,7 +37,7 @@ namespace HarryPeloteur_BL.Controllers
         {
             dt.dbg(command);
 
-            var LogicHandler = new GameLogic(); // La logique du jeu
+            var logicHandler = new GameLogic(); // La logique du jeu
 
             var gameinfos = db.GetGameInfos(id); // Obtient les informations actuelles sur la partie
 
@@ -48,16 +48,16 @@ namespace HarryPeloteur_BL.Controllers
                 switch (action)
                 {
                     case "avancer": // Gére le déplacement du personnage
-                        LogicHandler.HandleAvancer(gameinfos, parameters);
+                        logicHandler.HandleAvancer(gameinfos, parameters);
                         break;
                     case "combattre": // Gére le combat
-                        LogicHandler.HandleCombattre(gameinfos, parameters);
+                        logicHandler.HandleCombattre(gameinfos, parameters);
                         break;
                     case "fuir": // Gére la fuite
-                        LogicHandler.HandleFuir(gameinfos, parameters);
+                        logicHandler.HandleFuir(gameinfos, parameters);
                         break;
                     case "ramasser": // Gère le fait de ramasser un objet
-                        LogicHandler.HandleRamasser(gameinfos, parameters);
+                        logicHandler.HandleRamasser(gameinfos, parameters);
                         break;
                     case null:
                         dt.dbg("Commande non reconnue");
