@@ -11,9 +11,9 @@ namespace HarryPeloteur_DAL
         public int Id { get; set; }
         public string Nom { get; set; }
         public int Pv { get; set; }
-        public float Force { get; set; }
-        public float Fuite { get; set; }
-        public float Dexterite { get; set; }
+        public int Force { get; set; }
+        public int Fuite { get; set; }
+        public int Dexterite { get; set; }
 
         public int DropXp { get; set; }
         public int DropArgent { get; set; }
