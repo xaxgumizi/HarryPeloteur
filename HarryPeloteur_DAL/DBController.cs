@@ -60,7 +60,7 @@ namespace HarryPeloteur_DAL
             return true;
         }
 
-        public SalleDTO GetRoom(int id)
+        public SalleDTO GetSalle(int id)
         {
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection con = new SqlConnection(conString);
@@ -91,6 +91,11 @@ namespace HarryPeloteur_DAL
 
 
             return (salle);
+        }
+
+        public List<SalleDTO> GetSalles(int gameId)
+        {
+            return new List<SalleDTO>();
         }
 
         public PersonneDTO GetPersonne(int id)
@@ -176,12 +181,17 @@ namespace HarryPeloteur_DAL
             return contenu;
         }
 
-        public ObjetDTO GetObjet(int id)
+        public ObjetDTO GetObjet(int? id)
         {
             return new ObjetDTO();
         }
 
-        public GameInformationDTO GetGameInfos(int id)
+        public MonstreDTO GetMonstre(int? id)
+        {
+            return new MonstreDTO();
+        }
+
+        public GameInformationDTO GetGameInfos(int? id)
         {
             return new GameInformationDTO();
         }

@@ -127,7 +127,7 @@ namespace HarryPeloteur_BL.Controllers
                     db.InsertRoom(newroom);
 
                     // On récupère de nouveau les salles pour avoir l'Id de la salle que l'on vient d'insérer
-                    gameInfos.Rooms = db.GetRoom(gameInfos.Game.Id);
+                    gameInfos.Rooms = db.GetSalles(gameInfos.Game.Id);
                     // On considère que les résultats sont triés par Id croissant, donc on prend la dernière salle
                     int newRoomId = gameInfos.Rooms.Last().Id;
 
@@ -135,7 +135,7 @@ namespace HarryPeloteur_BL.Controllers
                     gameInfos.Character.SalleActuelle = newRoomId;
                 }
 
-                db.UpdateCharacter(gameInfos.Character); // On met à jour dans la BDD le personnage
+                db.UpdatePersonne(gameInfos.Character); // On met à jour dans la BDD le personnage
             }
             else // Sinon on ne peut pas aller là
             {
@@ -231,7 +231,7 @@ namespace HarryPeloteur_BL.Controllers
                 return;
             }
 
-            HarryPeloteur_DAL.MonstreDTO currentMonster = db.GetMonster(currentRoom.IdContenu);
+            HarryPeloteur_DAL.MonstreDTO currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // On détermine les chances de toucher en fonction de la dextérité
             //double playerHitChance = 0.5 * Math.Pow((double)gameInfos.Character.Dexterite / (double)currentMonster.Dexterite, 2);
@@ -282,7 +282,7 @@ namespace HarryPeloteur_BL.Controllers
             }
 
             // On met à jour la vie du joueur
-            db.UpdateCharacter(gameInfos.Character);
+            db.UpdatePersonne(gameInfos.Character);
         }
 
         public void HandleFuir(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
@@ -299,7 +299,7 @@ namespace HarryPeloteur_BL.Controllers
             }
 
             // On obtient le monstre dans la salle actuelle
-            var currentMonster = db.GetMonster(currentRoom.IdContenu);
+            var currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // Calcule la chance de s'échapper selon les caractéristiques du joueur et du monstre avec un minimum de 20%
             var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite)/gameInfos.Character.Fuite);
@@ -331,7 +331,7 @@ namespace HarryPeloteur_BL.Controllers
                 }
             }
             // Met à jour la vie du personnage
-            db.UpdateCharacter(gameInfos.Character);
+            db.UpdatePersonne(gameInfos.Character);
         }
 
         public void HandleRamasser(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
