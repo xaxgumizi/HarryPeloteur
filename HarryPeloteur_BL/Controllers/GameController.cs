@@ -28,7 +28,7 @@ namespace HarryPeloteur_BL.Controllers
         [Route("games")]
         public HttpResponseMessage GetGames()
         {
-            var liste = new List<HarryPeloteur_DAL.PartieDTO> { };
+            List<HarryPeloteur_DAL.PartieDTO> liste = db.GetParties();
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { liste });
         }
 

@@ -156,6 +156,11 @@ namespace HarryPeloteur_DAL
             con.Close();
             return (partie);
         }
+
+        public List<PartieDTO> GetParties()
+        {
+            return new List<PartieDTO>();
+        }
         public string GetTexte(int type)
         {
             //string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
