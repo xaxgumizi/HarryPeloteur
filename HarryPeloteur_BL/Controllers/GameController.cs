@@ -13,15 +13,16 @@ namespace HarryPeloteur_BL.Controllers
 
         //dbController db = new dbController();
         DebugTools dt = new DebugTools();
-        DBController woaw = new DBController();
         HarryPeloteur_DAL.DBController db = new HarryPeloteur_DAL.DBController();
-        
+
+        GameLogic logicHandler = new GameLogic(); // La logique du jeu
+
         [Route("game/{id}")]
         public HttpResponseMessage GetGame(int id) // https://localhost:44344/api/game/character?id=12
         {
-            var gameinfos = db.GetGameInfos(id);
+            var gameInfos = db.GetGameInfos(id);
 
-            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameinfos });
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos });
         }
 
         [Route("games")]
@@ -37,9 +38,9 @@ namespace HarryPeloteur_BL.Controllers
             System.Diagnostics.Debug.WriteLine(command);
 
 
-            var logicHandler = new GameLogic(); // La logique du jeu
+            
 
-            var gameinfos = db.GetGameInfos(id); // Obtient les informations actuelles sur la partie
+            var gameInfos = db.GetGameInfos(id); // Obtient les informations actuelles sur la partie
 
             string[] parameters = command.Split(' ');
             if (parameters.Length > 0)
@@ -48,25 +49,26 @@ namespace HarryPeloteur_BL.Controllers
                 switch (action)
                 {
                     case "avancer": // Gére le déplacement du personnage
-                        logicHandler.HandleAvancer(gameinfos, parameters);
+                        logicHandler.HandleAvancer(gameInfos, parameters);
                         break;
                     case "combattre": // Gére le combat
-                        logicHandler.HandleCombattre(gameinfos, parameters);
+                        logicHandler.HandleCombattre(gameInfos, parameters);
                         break;
                     case "fuir": // Gére la fuite
-                        logicHandler.HandleFuir(gameinfos, parameters);
+                        logicHandler.HandleFuir(gameInfos, parameters);
                         break;
                     case "ramasser": // Gère le fait de ramasser un objet
-                        logicHandler.HandleRamasser(gameinfos, parameters);
+                        logicHandler.HandleRamasser(gameInfos, parameters);
+                        break;
                 }
 
             }
 
 
             /******************* modifs Augustin **************************/
-            piece = FindRoomById(newgameinfos.rooms, newgameinfos.character.salle_actuelle);
+            HarryPeloteur_DAL.SalleDTO piece = logicHandler.FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle);
             //la piece actuelle
-            var end_text = "";
+            var endText = "";
             int champ = 0; // champ de texte traité 0:intro; 1:maintext; 2:outro;
             int type = 0;
             //type 
@@ -84,7 +86,7 @@ namespace HarryPeloteur_BL.Controllers
                         break;
                     case 1:
                         type = 1;
-                        switch (piece.type_contenu)
+                        switch (piece.TypeContenu)
                         {//on filtre par contenu de a salle pour demander le texte correspondant
                             case 1: //objet
                                 type = 2;
@@ -100,60 +102,60 @@ namespace HarryPeloteur_BL.Controllers
                         type = 4;
                         break;
                 }
-                end_text += get_text(type);
+                endText += db.GetTexte(type);
                 champ++;
             }
             //actions possibles: 
             //mouvement 10-devant; 11-gauche; 12-droite; 13-derriere;
             //combat 20-combattre; 21-fuir;
             //objet 30-utiliser objet
-            var actions_possibles = new List<string> { };
-            switch (piece.etat)
+            var actionsPossibles = new List<string> { };
+            switch (piece.Etat)
             {
                 case 0: //salle non terminée
-                    switch (piece.type_contenu)
+                    switch (piece.TypeContenu)
                     {
                         case 0: //rien
                             for (int i = 0; i < 4; i++)
                             {
-                                if (piece.portes[i])
+                                if (piece.Portes[i] == 1)
                                 {
-                                    actions_possibles.Add(ToString(i + 10));
+                                    actionsPossibles.Add((i + 10).ToString());
                                 }
                             }
                             break;
                         case 1: //objet
-                            actions_possibles.Add(ToString(30));
+                            actionsPossibles.Add((30).ToString());
                             for (int i = 0; i < 4; i++)
                             {
-                                if (piece.portes[i])
+                                if (piece.Portes[i] == 1)
                                 {
-                                    actions_possibles.Add(ToString(i + 10));
+                                    actionsPossibles.Add((i + 10).ToString());
                                 }
                             }
                             break;
                         case 2:
-                            actions_possibles.Add(ToString(20));
-                            actions_possibles.Add(ToString(21));
+                            actionsPossibles.Add((20).ToString());
+                            actionsPossibles.Add((21).ToString());
                             break;
                     }
                     break;
                 case 1: //salle terminée
                     for (int i = 0; i < 4; i++)
                     {
-                        if (piece.portes[i])
+                        if (piece.Portes[i] == 1)
                         {
-                            actions_possibles.Add(ToString(i + 10));
+                            actionsPossibles.Add((i + 10).ToString());
                         }
                     }
                     break;
             }
 
 
-            gameinfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
+            gameInfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
 
 
-            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, end_text, actions_possibles, new { newgameinfos });
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, endText, actionsPossibles });
         }
     }
 }
