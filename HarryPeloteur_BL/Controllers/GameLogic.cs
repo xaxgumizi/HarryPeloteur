@@ -116,15 +116,15 @@ namespace HarryPeloteur_BL.Controllers
                     // La porte opposée de celle d'où l'on vient
                     int[] oppposingDirections = { 2, 3, 0, 1 };
 
-                    HarryPeloteur_DAL.SalleDTO newroom = GenerateNewRoom();
+                    HarryPeloteur_DAL.SalleDTO newRoom = GenerateNewRoom();
 
-                    newroom.IdPartie = gameInfos.Game.Id; // On assigne l'Id de la partie et ses nouvelles coordonnées
-                    newroom.Coordonnees = currentcoordinates;
+                    newRoom.IdPartie = gameInfos.Game.Id; // On assigne l'Id de la partie et ses nouvelles coordonnées
+                    newRoom.Coordonnees = currentcoordinates;
                     // On place la porte pour retourner de là où on vient
-                    newroom.Portes[oppposingDirections[direction]] = 1;
+                    newRoom.Portes[oppposingDirections[direction]] = 1;
 
                     // On insère dans la BDD la nouvelle salle
-                    db.InsertRoom(newroom);
+                    db.InsertRoom(newRoom);
 
                     // On récupère de nouveau les salles pour avoir l'Id de la salle que l'on vient d'insérer
                     gameInfos.Rooms = db.GetSalles(gameInfos.Game.Id);
@@ -367,6 +367,97 @@ namespace HarryPeloteur_BL.Controllers
 
             db.UpdatePersonne(gameInfos.Character);
 
+        }
+
+        public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
+        {
+
+            HarryPeloteur_DAL.SalleDTO piece = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle);
+            //la piece actuelle
+            var endText = "";
+            int champ = 0; // champ de texte traité 0:intro; 1:maintext; 2:outro;
+            int type = 0;
+            //type 
+            //0 : intro;
+            //1 : vide;
+            //2 : objet;
+            //3 : monstre;
+            //4 : outro;
+            while (champ < 3)
+            {
+                switch (champ)
+                {
+                    case 0:
+                        type = 0;
+                        break;
+                    case 1:
+                        type = 1;
+                        switch (piece.TypeContenu)
+                        {//on filtre par contenu de a salle pour demander le texte correspondant
+                            case 1: //objet
+                                type = 2;
+                                break;
+                            case 2: //monstre
+                                type = 3;
+                                break;
+                            default: //rien
+                                break;
+                        }
+                        break;
+                    case 2:
+                        type = 4;
+                        break;
+                }
+                endText += db.GetTexte(type);
+                champ++;
+            }
+            //actions possibles: 
+            //mouvement 10-devant; 11-gauche; 12-droite; 13-derriere;
+            //combat 20-combattre; 21-fuir;
+            //objet 30-utiliser objet
+            var actionsPossibles = new List<string> { };
+            switch (piece.Etat)
+            {
+                case 0: //salle non terminée
+                    switch (piece.TypeContenu)
+                    {
+                        case 0: //rien
+                            for (int i = 0; i < 4; i++)
+                            {
+                                if (piece.Portes[i] == 1)
+                                {
+                                    actionsPossibles.Add((i + 10).ToString());
+                                }
+                            }
+                            break;
+                        case 1: //objet
+                            actionsPossibles.Add((30).ToString());
+                            for (int i = 0; i < 4; i++)
+                            {
+                                if (piece.Portes[i] == 1)
+                                {
+                                    actionsPossibles.Add((i + 10).ToString());
+                                }
+                            }
+                            break;
+                        case 2:
+                            actionsPossibles.Add((20).ToString());
+                            actionsPossibles.Add((21).ToString());
+                            break;
+                    }
+                    break;
+                case 1: //salle terminée
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (piece.Portes[i] == 1)
+                        {
+                            actionsPossibles.Add((i + 10).ToString());
+                        }
+                    }
+                    break;
+            }
+
+            return new { endText, actionsPossibles };
         }
 
 
