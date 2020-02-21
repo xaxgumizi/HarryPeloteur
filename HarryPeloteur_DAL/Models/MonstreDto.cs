@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace HarryPeloteur_DAL
 {
-    public class MonstreDto
+    public class MonstreDTO
     {
         public int Id { get; set; }
         public string Nom { get; set; }
         public int Pv { get; set; }
-        public float Force { get; set; }
-        public float Fuite { get; set; }
-        public float Dexterite { get; set; }
+        public int Force { get; set; }
+        public int Fuite { get; set; }
+        public int Dexterite { get; set; }
 
-        public int Drop_xp { get; set; }
-        public int Drop_argent { get; set; }
-        public float Proba_drop_argent { get; set; }
+        public int DropXp { get; set; }
+        public int DropArgent { get; set; }
+        public float ProbaDropArgent { get; set; }
     }
 }

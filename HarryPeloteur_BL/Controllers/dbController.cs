@@ -119,7 +119,7 @@ namespace HarryPeloteur_BL.Controllers
             int index = logic.FindRoomById(this.salles, room.id).index;
             this.salles[index] = room;
         }
-        public void updateCharacter(Models.CharacterDTO character)
+        public void UpdateCharacter(Models.CharacterDTO character)
         {
             dt.dbg("Mise à jour du personnage");
             //dt.VarDump(character);

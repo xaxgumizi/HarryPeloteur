@@ -18,7 +18,7 @@ namespace HarryPeloteur_DAL
             con = new SqlConnection(conString);
             this.con.Open();
         }
-        public int InsertRoom(SalleDto salle)
+        public int InsertRoom(SalleDTO salle)
         {
             //string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             //SqlConnection con = new SqlConnection(conString);
@@ -35,7 +35,7 @@ namespace HarryPeloteur_DAL
             con.Close();
             return newID;
         }
-        public void UpdateRoom(SalleDto salle)
+        public void UpdateRoom(SalleDTO salle)
         {
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection con = new SqlConnection(conString);
@@ -47,7 +47,7 @@ namespace HarryPeloteur_DAL
 
         }
 
-        public bool UpdatePersonne(PersonneDto p)
+        public bool UpdatePersonne(PersonneDTO p)
         {
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection con = new SqlConnection(conString);
@@ -60,7 +60,7 @@ namespace HarryPeloteur_DAL
             return true;
         }
 
-        public SalleDto getSalle(int id)
+        public SalleDTO GetSalle(int id)
         {
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection con = new SqlConnection(conString);
@@ -69,10 +69,9 @@ namespace HarryPeloteur_DAL
             string commande = "select * from salle where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
-            SalleDto salle = new SalleDto();
+            SalleDTO salle = new SalleDTO();
 
             while (reader.Read())
-
             {
                 salle.Id = (int)reader.GetValue(0);
                 salle.coordonneeX = (int)reader.GetValue(1);
@@ -94,7 +93,12 @@ namespace HarryPeloteur_DAL
             return (salle);
         }
 
-        public PersonneDto GetPersonne(int id)
+        public List<SalleDTO> GetSalles(int gameId)
+        {
+            return new List<SalleDTO>();
+        }
+
+        public PersonneDTO GetPersonne(int id)
         {
 
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
@@ -104,7 +108,7 @@ namespace HarryPeloteur_DAL
             string commande = "select * from personne where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
-            PersonneDto personne = new PersonneDto();
+            PersonneDTO personne = new PersonneDTO();
             while (reader.Read())
 
             {
@@ -126,7 +130,7 @@ namespace HarryPeloteur_DAL
 
         }
 
-        public PartieDto getPartie(int id)
+        public PartieDTO GetPartie(int id)
         {
             string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection con = new SqlConnection(conString);
@@ -135,12 +139,12 @@ namespace HarryPeloteur_DAL
             string commande = "select * from partie where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
-            PartieDto partie = new PartieDto();
+            PartieDTO partie = new PartieDTO();
             while (reader.Read())
 
             {
                 partie.Id = (int)reader.GetValue(0);
-                partie.Id_personnage = (int)reader.GetValue(1);
+                partie.IdPersonnage = (int)reader.GetValue(1);
                 partie.Salle_actuelle = (int)reader.GetValue(2);
                 partie.Difficulte = (int)reader.GetValue(3);
 
@@ -152,7 +156,12 @@ namespace HarryPeloteur_DAL
             con.Close();
             return (partie);
         }
-        public string getTexte(int type)
+
+        public List<PartieDTO> GetParties()
+        {
+            return new List<PartieDTO>();
+        }
+        public string GetTexte(int type)
         {
             //string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             //SqlConnection con = new SqlConnection(conString);
@@ -177,6 +186,19 @@ namespace HarryPeloteur_DAL
             return contenu;
         }
 
+        public ObjetDTO GetObjet(int? id)
+        {
+            return new ObjetDTO();
+        }
 
+        public MonstreDTO GetMonstre(int? id)
+        {
+            return new MonstreDTO();
+        }
+
+        public GameInformationDTO GetGameInfos(int? id)
+        {
+            return new GameInformationDTO();
+        }
     }
 }

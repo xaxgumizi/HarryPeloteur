@@ -10,11 +10,16 @@ namespace HarryPeloteur_BL.Controllers
     [RoutePrefix("api")]
     public class GameController : ApiController
     {
-        dbController db = new dbController();
+
+        //dbController db = new dbController();
+        DebugTools dt = new DebugTools();
+        DBController woaw = new DBController();
+        HarryPeloteur_DAL.DBController db = new HarryPeloteur_DAL.DBController();
+        
         [Route("game/{id}")]
         public HttpResponseMessage GetGame(int id) // https://localhost:44344/api/game/character?id=12
         {
-            var gameinfos = db.getGameInfos(id);
+            var gameinfos = db.GetGameInfos(id);
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameinfos });
         }
@@ -22,7 +27,7 @@ namespace HarryPeloteur_BL.Controllers
         [Route("games")]
         public HttpResponseMessage GetGames()
         {
-            var liste = new List<Models.PartieDTO> { };
+            List<HarryPeloteur_DAL.PartieDTO> liste = db.GetParties();
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { liste });
         }
 
@@ -31,10 +36,10 @@ namespace HarryPeloteur_BL.Controllers
         {
             System.Diagnostics.Debug.WriteLine(command);
 
-            var LogicHandler = new GameLogic();
 
-            var gameinfos = db.getGameInfos(id);
-            var newgameinfos = new Models.GameInformationDTO();
+            var logicHandler = new GameLogic(); // La logique du jeu
+
+            var gameinfos = db.GetGameInfos(id); // Obtient les informations actuelles sur la partie
 
             string[] parameters = command.Split(' ');
             if (parameters.Length > 0)
@@ -42,10 +47,17 @@ namespace HarryPeloteur_BL.Controllers
                 string action = parameters[0];
                 switch (action)
                 {
-                    case "avancer":
-                        newgameinfos = LogicHandler.HandleAvancer(gameinfos, parameters);
+                    case "avancer": // Gére le déplacement du personnage
+                        logicHandler.HandleAvancer(gameinfos, parameters);
                         break;
-
+                    case "combattre": // Gére le combat
+                        logicHandler.HandleCombattre(gameinfos, parameters);
+                        break;
+                    case "fuir": // Gére la fuite
+                        logicHandler.HandleFuir(gameinfos, parameters);
+                        break;
+                    case "ramasser": // Gère le fait de ramasser un objet
+                        logicHandler.HandleRamasser(gameinfos, parameters);
                 }
 
             }
@@ -137,6 +149,8 @@ namespace HarryPeloteur_BL.Controllers
                     break;
             }
 
+
+            gameinfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
 
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, end_text, actions_possibles, new { newgameinfos });

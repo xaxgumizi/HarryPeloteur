@@ -43,15 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\MonstreDto.cs" />
-    <Compile Include="Models\ObjetDto.cs" />
-    <Compile Include="Models\PartieDto.cs" />
-    <Compile Include="Models\PersonneDto.cs" />
+    <Compile Include="Models\GameInformationDTO.cs" />
+    <Compile Include="Models\MonstreDTO.cs" />
+    <Compile Include="Models\ObjetDTO.cs" />
+    <Compile Include="Models\PartieDTO.cs" />
+    <Compile Include="Models\PersonneDTO.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DBController.cs" />
-    <Compile Include="Models\SalleDto.cs" />
-    <Compile Include="Models\TexteDto.cs" />
+    <Compile Include="Models\SalleDTO.cs" />
+    <Compile Include="Models\TexteDTO.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

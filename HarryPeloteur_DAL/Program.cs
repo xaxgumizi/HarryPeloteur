@@ -12,7 +12,7 @@ namespace HarryPeloteur_DAL
         static void Main(string[] args)
         {
             DBController r = new DBController();
-            r.getTexte(1);
+            r.GetTexte(1);
             
         }
     }
