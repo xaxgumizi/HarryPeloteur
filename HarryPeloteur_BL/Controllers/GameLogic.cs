@@ -369,7 +369,46 @@ namespace HarryPeloteur_BL.Controllers
 
         }
 
+        public void GenerateNewGame(string nomPerso, int difficultePartie)
+        {
+            HarryPeloteur_DAL.PersonneDTO perso = new HarryPeloteur_DAL.PersonneDTO()
+            {
+                IDictionary = 0,
+                SalleActuelle = 0,
+                Nom = nomPerso,
+                PV = 10,
+                Force = 10,
+                Fuite = 10,
+                Dexterite = 10,
+                XP = 10,
+                Po = 10
+            };
+            perso.ID = HarryPeloteur_DAL.DBController.InsertPersonne(perso);
 
+            HarryPeloteur_DAL.PartieDTO partie = new HarryPeloteur_DAL.PartieDTO() 
+            {
+                ID = 0,
+                IDPersonnage = perso.ID,
+                Difficulte = difficultePartie
+            };
+            partie.ID = HarryPeloteur_DAL.DBController.InsertPartie(partie);
+            HarryPeloteur_DAL.SalleDTO salle = new HarryPeloteur_DAL.SalleDTO() 
+            {
+                ID = 0,
+                IDPartie = partie.ID,
+                Coordonnees = new int[] { 0, 0 },
+                IDContenu = 0,
+                TypeContenu = 0,
+                Portes = new int[] { 0, 1, 1, 0 },
+                Etat = 0
+            };
+            salle.ID = HarryPeloteur_DAL.DBController.InsertSalle(salle);
+            perso.SalleActuelle = salle.ID;
+
+
+
+
+        }
     }
 
     public class LoadedDie
