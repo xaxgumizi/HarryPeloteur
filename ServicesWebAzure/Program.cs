@@ -12,8 +12,9 @@ namespace ServicesWebAzure
         static void Main(string[] args)
         {
             RetrieveData r = new RetrieveData();
-            r.getTexte(1);
-            
+            r.getSalle(2);
+
+
         }
     }
 }

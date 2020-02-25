@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServicesWebAzure
 {
-    class PersonneDto
+    public class PersonneDto
     {
         public int Id { get; set; }
         public string Nom { get; set; }

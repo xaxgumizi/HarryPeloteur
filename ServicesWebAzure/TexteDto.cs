@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServicesWebAzure
 {
-    class TexteDto
+    public class TexteDto
     {
         public int Id { get; set; }
         public string type { get; set; }

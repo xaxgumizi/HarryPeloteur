@@ -7,20 +7,21 @@ using System.Threading.Tasks;
 
 namespace ServicesWebAzure
 {
-    class RetrieveData
+    public class RetrieveData
     {
         public string contenu;
+        string conString;
+        SqlConnection con;
 
         public RetrieveData()
         {
-
+            conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            con = new SqlConnection(conString);
         }
         public int InsertRoom(SalleDto salle)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
             con.Open();
-            string q = "insert into salle(coordonneeX,coordonneeY,id_contenu,type_contenu,portes,etat,id_partie) values(" + salle.coordonneeX+","+salle.coordonneeY+","+salle.id_contenu+","+salle.type_contenu+","+salle.portes+","+salle.etat+","+salle.id_partie+")";
+            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values(" + salle.coordonnees+","+salle.id_contenu+","+salle.type_contenu+","+salle.portes+","+salle.etat+","+salle.id_partie+")";
             SqlCommand cmd = new SqlCommand(q, con);
             cmd.ExecuteNonQuery();
 
@@ -33,10 +34,8 @@ namespace ServicesWebAzure
         }
         public void UpdateRoom(SalleDto salle)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
             con.Open();
-            string q = "update salle set coordonneeX =" + salle.coordonneeX + " ,coordonneeY=" + salle.coordonneeY + " ,id_contenu=" + salle.id_contenu + " ,type_contenu=" + salle.type_contenu + " ,portes=" + salle.portes + " ,etat=" + salle.etat + ", id_partie=" + salle.id_partie + " where Id=" + salle.Id;
+            string q = "update salle set coordonnees =" + salle.coordonnees + " ,id_contenu=" + salle.id_contenu + " ,type_contenu=" + salle.type_contenu + " ,portes=" + salle.portes + " ,etat=" + salle.etat + ", id_partie=" + salle.id_partie + " where Id=" + salle.Id;
             SqlCommand cmd = new SqlCommand(q, con);
             cmd.ExecuteNonQuery();
             con.Close();
@@ -45,8 +44,6 @@ namespace ServicesWebAzure
 
         public bool UpdatePersonne(PersonneDto p)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
             con.Open();
             string q = "update personne set Nom =" + p.Nom +" ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po+", salle_actuelle="+p.salle_actuelle + " where Id=" + p.Id;
             SqlCommand cmd = new SqlCommand(q, con);
@@ -58,10 +55,7 @@ namespace ServicesWebAzure
 
         public SalleDto getSalle(int id)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
             con.Open();
-
             string commande = "select * from salle where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
@@ -71,16 +65,39 @@ namespace ServicesWebAzure
 
             {
                 salle.Id = (int)reader.GetValue(0);
-                salle.coordonneeX = (int)reader.GetValue(1);
-                salle.coordonneeY = (int)reader.GetValue(2);
-                salle.id_contenu = (int)reader.GetValue(3);
-                salle.type_contenu = (int)reader.GetValue(4);
-                salle.portes = (string)reader.GetValue(5);
-                salle.etat = (int)reader.GetValue(6);
-                salle.id_partie = (int)reader.GetValue(7);
+
+                string sallees = (string)reader.GetValue(1);
+                int salles = Int32.Parse(sallees);
+                int[] tabSalles = new int[2];
+                tabSalles[0] = salles % 10;
+                salles = salles / 10;
+                tabSalles[1] = salles % 10;
+                salle.coordonnees = tabSalles;
+
+                salle.id_contenu = (int)reader.GetValue(2);
+
+                string contenu = reader.GetValue(3).ToString();
+                salle.type_contenu = Int32.Parse(contenu);
+
+                string doorrs= reader.GetValue(4).ToString(); // par exemple si j'ai 1000 tabDoors[0]=0 , tabDoors[1]=0 ,tabDoors[2]=0 ,tabDoors[3]=1 , 
+                int doors = Int32.Parse(doorrs);
+                int[] tabDoors = new int[4];
+                tabDoors[0] = doors % 10;
+                doors = doors / 10;
+                tabDoors[1] = doors % 10;
+                doors = doors / 10;
+                tabDoors[2] = doors % 10;
+                doors = doors / 10;
+                tabDoors[3] = doors % 10;
+                salle.portes = tabDoors;
+
+                salle.etat = (int)reader.GetValue(5);
+
+                salle.id_partie = (int)reader.GetValue(6);
             }
 
-            Console.WriteLine(salle.Id + " " + salle.coordonneeX);
+            Console.WriteLine(salle.coordonnees[1] + " " + salle.coordonnees[0]);
+
             Console.ReadLine();
 
             con.Close();
@@ -92,11 +109,7 @@ namespace ServicesWebAzure
 
         public PersonneDto GetPersonne(int id)
         {
-
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
             con.Open();
-
             string commande = "select * from personne where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
@@ -125,10 +138,7 @@ namespace ServicesWebAzure
 
         public PartieDto getPartie(int id)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
             con.Open();
-
             string commande = "select * from partie where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
@@ -150,10 +160,7 @@ namespace ServicesWebAzure
         }
         public string getTexte(int type)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
             con.Open();
-
             string commande = "select * from texte where Id=" + type;
             SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
@@ -172,6 +179,61 @@ namespace ServicesWebAzure
 
             con.Close();
             return contenu;
+        }
+
+        public void deletePersonne(int identifiant)
+        {
+            con.Open();
+            string q = "delete from Personne where id=" + identifiant;
+            SqlCommand cmd = new SqlCommand(q, con);
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public void deletePartie(int identifiant)
+        {
+            con.Open();
+            string q = "delete from Partie where id=" + identifiant;
+            SqlCommand cmd = new SqlCommand(q, con);
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public void deleteSalle(int identifiantPartie)
+        {
+            con.Open();
+            string q = "delete from Partie where id_partie=" + identifiantPartie;
+            SqlCommand cmd = new SqlCommand(q, con);
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public MonstreDto getMonstre(int id)
+        {
+            con.Open();
+            string commande = "select * from Monstre where Id=" + id;
+            SqlCommand cmd1 = new SqlCommand(commande, con);
+            SqlDataReader reader = cmd1.ExecuteReader();
+            MonstreDto monstre = new MonstreDto();
+            while (reader.Read())
+
+            {
+                monstre.Id = (int)reader.GetValue(0);
+                monstre.Nom = (string)reader.GetValue(1);
+                monstre.Pv = (int)reader.GetValue(2);
+                monstre.Force = (int)reader.GetValue(3);
+                monstre.Dexterite = (int)reader.GetValue(4);
+                monstre.Drop_xp = (int)reader.GetValue(5);
+                monstre.Drop_argent = (int)reader.GetValue(6);
+                monstre.Proba_drop_argent = (int)reader.GetValue(7);
+            }
+
+            Console.WriteLine(monstre.Id);
+            Console.ReadLine();
+
+            con.Close();
+            return (monstre);
+
         }
 
 
