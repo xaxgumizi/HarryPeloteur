@@ -163,25 +163,39 @@ namespace HarryPeloteur_DAL
             
             while(reader.Read())
             {
-                string contenu;
-                contenu = (string)reader.GetValue(2);
+                string contenu = (string)reader.GetValue(2);
             }
 
             this.con.Close();
             return contenu;
         }
 
-        public ObjetDTO GetObjet(int? id)
+        public ObjetDTO GetObjet(int id)
         {
-            return new ObjetDTO();
+            string commande = "select * from objet where Id=" + id;
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
+            SqlDataReader reader = cmd1.ExecuteReader();
+
+            ObjetDTO objet = new ObjetDTO();
+            while(reader.Read())
+            {
+                objet.Id = (int)reader.GetValue(0);
+                objet.Nom = (string)reader.GetValue(1);
+                objet.Description = (string)reader.GetValue(2);
+                objet.ProprieteCible = (string)reader.GetValue(3);
+                objet.Montant = (int)reader.GetValue(4);
+            }
+
+            return objet;
         }
 
-        public MonstreDTO GetMonstre(int? id)
+        public MonstreDTO GetMonstre(int id)
         {
             return new MonstreDTO();
         }
 
-        public GameInformationDTO GetGameInfos(int? id)
+        public GameInformationDTO GetGameInfos(int id)
         {
             return new GameInformationDTO();
         }
