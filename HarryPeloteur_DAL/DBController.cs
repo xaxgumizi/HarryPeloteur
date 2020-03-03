@@ -37,19 +37,21 @@ namespace HarryPeloteur_DAL
 
             var newId = Convert.ToInt32(cmd.ExecuteScalar());
 
-            con.Close();
+            this.con.Close();
 
             return newId;
         }
         public void UpdateRoom(SalleDTO salle)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
-            string q = "update salle set coordonneeX =" + salle.coordonneeX + " ,coordonneeY=" + salle.coordonneeY + " ,id_contenu=" + salle.id_contenu + " ,type_contenu=" + salle.type_contenu + " ,portes=" + salle.portes + " ,etat=" + salle.etat + ", id_partie=" + salle.id_partie + " where Id=" + salle.Id;
-            SqlCommand cmd = new SqlCommand(q, con);
+            string coordText = ArrayToString(salle.Coordonnees);
+            string portesText = ArrayToString(salle.Portes);
+
+            string q = "update salle set coordonnees ='" + coordText + "' ,id_contenu=" + salle.IdContenu + " ,type_contenu=" + salle.TypeContenu + " ,portes='" + portesText + "' ,etat=" + salle.Etat + ", id_partie=" + salle.IdPartie + " where Id=" + salle.Id;
+            SqlCommand cmd = new SqlCommand(q, this.con);
+            
             cmd.ExecuteNonQuery();
-            con.Close();
+
+            this.con.Close();
 
         }
 
