@@ -69,54 +69,33 @@ namespace HarryPeloteur_DAL
 
         public SalleDTO GetSalle(int id)
         {
-            con.Open();
             string commande = "select * from salle where Id=" + id;
-            SqlCommand cmd1 = new SqlCommand(commande, con);
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
             SqlDataReader reader = cmd1.ExecuteReader();
+
             SalleDTO salle = new SalleDTO();
 
             while (reader.Read())
-
             {
                 salle.Id = (int)reader.GetValue(0);
 
-                string sallees = (string)reader.GetValue(1);
-                int salles = Int32.Parse(sallees);
-                int[] tabSalles = new int[2];
-                tabSalles[0] = salles % 10;
-                salles = salles / 10;
-                tabSalles[1] = salles % 10;
-                salle.Coordonnees = tabSalles;
+                string coordText = (string)reader.GetValue(1);
+                salle.Coordonnees = StringToArray(coordText);
 
                 salle.IdContenu = (int)reader.GetValue(2);
 
-                string contenu = reader.GetValue(3).ToString();
-                salle.TypeContenu = Int32.Parse(contenu);
+                salle.TypeContenu = (int)reader.GetValue(3);
 
-                string doorrs = reader.GetValue(4).ToString(); // par exemple si j'ai 1000 tabDoors[0]=0 , tabDoors[1]=0 ,tabDoors[2]=0 ,tabDoors[3]=1 , 
-                int doors = Int32.Parse(doorrs);
-                int[] tabDoors = new int[4];
-                tabDoors[0] = doors % 10;
-                doors = doors / 10;
-                tabDoors[1] = doors % 10;
-                doors = doors / 10;
-                tabDoors[2] = doors % 10;
-                doors = doors / 10;
-                tabDoors[3] = doors % 10;
-                salle.Portes = tabDoors;
+                string portesText = (string)reader.GetValue(4); // par exemple si j'ai 1000 tabDoors[0]=0 , tabDoors[1]=0 ,tabDoors[2]=0 ,tabDoors[3]=1 , 
+                salle.Portes = StringToArray(portesText);
 
                 salle.Etat = (int)reader.GetValue(5);
 
                 salle.IdPartie = (int)reader.GetValue(6);
             }
 
-            Console.WriteLine(salle.Coordonnees[1] + " " + salle.Coordonnees[0]);
-
-            Console.ReadLine();
-
-            con.Close();
-
-
+            this.con.Close();
 
             return (salle);
         }
