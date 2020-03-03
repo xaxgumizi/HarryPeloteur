@@ -473,23 +473,23 @@ namespace HarryPeloteur_BL.Controllers
                             {
                                 if (piece.Portes[i] == 1)
                                 {
-                                    actionsPossibles.Add(coderetour[i + 10]);
+                                    actionsPossibles.Add(codeRetour[i + 10]);
                                 }
                             }
                             break;
                         case 1: //objet
-                            actionsPossibles.Add(coderetour[30]);
+                            actionsPossibles.Add(codeRetour[30]);
                             for (int i = 0; i < 4; i++)
                             {
                                 if (piece.Portes[i] == 1)
                                 {
-                                    actionsPossibles.Add(coderetour[i + 10]);
+                                    actionsPossibles.Add(codeRetour[i + 10]);
                                 }
                             }
                             break;
                         case 2:
-                            actionsPossibles.Add(coderetour[20]);
-                            actionsPossibles.Add(coderetour[20]);
+                            actionsPossibles.Add(codeRetour[20]);
+                            actionsPossibles.Add(codeRetour[20]);
                             break;
                     }
                     break;
@@ -498,7 +498,7 @@ namespace HarryPeloteur_BL.Controllers
                     {
                         if (piece.Portes[i] == 1)
                         {
-                            actionsPossibles.Add(coderetour[i + 10]);
+                            actionsPossibles.Add(codeRetour[i + 10]);
                         }
                     }
                     break;
@@ -508,10 +508,6 @@ namespace HarryPeloteur_BL.Controllers
         }
 
 
-
-
-
-        }
     }
 
     public class LoadedDie
