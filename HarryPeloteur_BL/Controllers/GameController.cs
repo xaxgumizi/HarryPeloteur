@@ -65,6 +65,7 @@ namespace HarryPeloteur_BL.Controllers
 
             gameInfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
 
+            var texts = logicHandler.GenerateDisplayText(gameInfos);
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, texts });
         }

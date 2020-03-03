@@ -6,7 +6,7 @@ using System.Web;
 namespace HarryPeloteur_BL.Controllers
 {
     public class dbController
-    {
+    {/*
         DebugTools dt = new DebugTools();
         private Models.CharacterDTO personnage = new Models.CharacterDTO()
         {
@@ -124,6 +124,6 @@ namespace HarryPeloteur_BL.Controllers
             dt.dbg("Mise à jour du personnage");
             //dt.VarDump(character);
             this.personnage = character;
-        }
+        }*/
     }
 }

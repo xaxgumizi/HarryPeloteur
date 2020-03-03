@@ -129,7 +129,7 @@ namespace HarryPeloteur_BL.Controllers
                     // On récupère de nouveau les salles pour avoir l'Id de la salle que l'on vient d'insérer
                     gameInfos.Rooms = db.GetSalles(gameInfos.Game.Id);
                     // On considère que les résultats sont triés par Id croissant, donc on prend la dernière salle
-                    int newRoomId = gameInfos.Rooms.Last().Id;
+                    int? newRoomId = gameInfos.Rooms.Last().Id;
 
                     // On déplace le personnage dans la nouvelle salle
                     gameInfos.Character.SalleActuelle = newRoomId;
@@ -144,7 +144,7 @@ namespace HarryPeloteur_BL.Controllers
             }
         }
 
-        public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> Rooms, int Id)
+        public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> Rooms, int? Id)
         {
             HarryPeloteur_DAL.SalleDTO found = null;
             int index = 0;
@@ -297,7 +297,8 @@ namespace HarryPeloteur_BL.Controllers
             var currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // Calcule la chance de s'échapper selon les caractéristiques du joueur et du monstre avec un minimum de 20%
-            var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite)/gameInfos.Character.Fuite);
+            //var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite) / Convert.ToSByte(gameInfos.Character.Fuite));
+            var escapeChance = 0.9;
             
             while(gameInfos.Character.Pv > 0)
             {
