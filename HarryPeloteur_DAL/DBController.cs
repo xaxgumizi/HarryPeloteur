@@ -156,24 +156,16 @@ namespace HarryPeloteur_DAL
         }
         public string GetTexte(int type)
         {
-            //string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            //SqlConnection con = new SqlConnection(conString);
-            //con.Open();
-
             string commande = "select * from texte where Id=" + type;
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
             SqlDataReader reader = cmd1.ExecuteReader();
             
-            while (reader.Read())
+            while(reader.Read())
             {
-                
                 string contenu;
                 contenu = (string)reader.GetValue(2);
-                Console.WriteLine(contenu);
-                Console.ReadLine();
-
             }
-
 
             this.con.Close();
             return contenu;
