@@ -270,7 +270,7 @@ namespace HarryPeloteur_DAL
 
         public int InsertPersonne(PersonneDTO perso)
         {
-            string q = "insert into personnage(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values('" + coordText + "'," + room.IdContenu + "," + room.TypeContenu + ",'" + portesText + "'," + room.Etat + "," + room.IdPartie + ") SELECT SCOPE_IDENTITY()";
+            string q = "insert into personnage(nom,pv,force,dexterite,fuite,xp,po,salle_actuelle) values('" + perso.Nom + "'," + perso.Pv + "," + perso.Force + "," + perso.Dexterite + "," + perso.Fuite + "," + perso.Xp + "," + perso.Po + "," + perso.SalleActuelle + ") SELECT SCOPE_IDENTITY()";
             SqlCommand cmd = new SqlCommand(q, this.con);
 
             var newId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -282,7 +282,14 @@ namespace HarryPeloteur_DAL
 
         public int InsertPartie(PartieDTO partie)
         {
-            throw new NotImplementedException();
+            string q = "insert into personnage(id_personnage,difficulte) values(" + partie.IdPersonnage + "," + partie.Difficulte + ") SELECT SCOPE_IDENTITY()";
+            SqlCommand cmd = new SqlCommand(q, this.con);
+
+            var newId = Convert.ToInt32(cmd.ExecuteScalar());
+
+            this.con.Close();
+
+            return newId;
         }
 
     }
