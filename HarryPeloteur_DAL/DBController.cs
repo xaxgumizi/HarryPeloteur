@@ -133,27 +133,20 @@ namespace HarryPeloteur_DAL
 
         public PartieDTO GetPartie(int id)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
-
             string commande = "select * from partie where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
+
             SqlDataReader reader = cmd1.ExecuteReader();
+
             PartieDTO partie = new PartieDTO();
             while (reader.Read())
-
             {
                 partie.Id = (int)reader.GetValue(0);
                 partie.IdPersonnage = (int)reader.GetValue(1);
                 partie.Difficulte = (int)reader.GetValue(2);
-
             }
 
-            Console.WriteLine(partie.Id);
-            Console.ReadLine();
-
-            con.Close();
+            this.con.Close();
             return (partie);
         }
 
