@@ -18,22 +18,36 @@ namespace HarryPeloteur_DAL
             con = new SqlConnection(conString);
             this.con.Open();
         }
+
+        public string ArrayToString(int[] array)
+        {
+            string newString = "";
+            foreach (int i in array)
+            {
+                newString += i.ToString();
+            }
+            return newString;
+        }
+        public int[] StringToArray(string str)
+        {
+            int[] newArray = new int[] { };
+            int len = str.Length;
+            for (int i = 0; i < len; i++)
+            {
+                newArray.Append((int)str[i]);
+            }
+            return newArray;
+        }
         public int InsertRoom(SalleDTO salle)
         {
-            //string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            //SqlConnection con = new SqlConnection(conString);
-            //this.con.Open();
-            //con.Open();
-            string q = "insert into salle(coordonneeX,coordonneeY,id_contenu,type_contenu,portes,etat,id_partie) values(" + salle.coordonneeX+","+salle.coordonneeY+","+salle.id_contenu+","+salle.type_contenu+","+salle.portes+","+salle.etat+","+salle.id_partie+")";
+            string coordText = ArrayToString(salle.Coordonnees);
+            string portesText = ArrayToString(salle.Portes);
+            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values(" + coordText +","+salle.IdContenu+","+salle.TypeContenu+","+portesText+","+salle.Etat+","+salle.IdPartie+ ") SELECT SCOPE_IDENTITY()";
             SqlCommand cmd = new SqlCommand(q, this.con);
-            cmd.ExecuteNonQuery();
+            int newId = (int)cmd.ExecuteScalar();
 
-            SqlCommand cmd1 = new SqlCommand("select max(Id) from salle", this.con);
-            int newID = (int)cmd1.ExecuteScalar();
-            Console.WriteLine(newID);
-            Console.ReadLine();
             con.Close();
-            return newID;
+            return newId;
         }
         public void UpdateRoom(SalleDTO salle)
         {
@@ -145,8 +159,7 @@ namespace HarryPeloteur_DAL
             {
                 partie.Id = (int)reader.GetValue(0);
                 partie.IdPersonnage = (int)reader.GetValue(1);
-                partie.Salle_actuelle = (int)reader.GetValue(2);
-                partie.Difficulte = (int)reader.GetValue(3);
+                partie.Difficulte = (int)reader.GetValue(2);
 
             }
 
