@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -369,6 +369,44 @@ namespace HarryPeloteur_BL.Controllers
 
         }
 
+        public void GenerateNewGame(string nomPerso, int difficultePartie)
+        {
+            HarryPeloteur_DAL.PersonneDTO perso = new HarryPeloteur_DAL.PersonneDTO()
+            {
+                IDictionary = 0,
+                SalleActuelle = 0,
+                Nom = nomPerso,
+                PV = 10,
+                Force = 10,
+                Fuite = 10,
+                Dexterite = 10,
+                XP = 10,
+                Po = 10
+            };
+            perso.ID = HarryPeloteur_DAL.DBController.InsertPersonne(perso);
+
+            HarryPeloteur_DAL.PartieDTO partie = new HarryPeloteur_DAL.PartieDTO() 
+            {
+                ID = 0,
+                IDPersonnage = perso.ID,
+                Difficulte = difficultePartie
+            };
+            partie.ID = HarryPeloteur_DAL.DBController.InsertPartie(partie);
+            HarryPeloteur_DAL.SalleDTO salle = new HarryPeloteur_DAL.SalleDTO() 
+            {
+                ID = 0,
+                IDPartie = partie.ID,
+                Coordonnees = new int[] { 0, 0 },
+                IDContenu = 0,
+                TypeContenu = 0,
+                Portes = new int[] { 0, 1, 1, 0 },
+                Etat = 0
+            };
+            salle.ID = HarryPeloteur_DAL.DBController.InsertSalle(salle);
+            perso.SalleActuelle = salle.ID;
+            HarryPeloteur_DAL.DBController.UpdatePersonne(perso);
+         }
+
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
         {
 
@@ -415,6 +453,15 @@ namespace HarryPeloteur_BL.Controllers
             //mouvement 10-devant; 11-gauche; 12-droite; 13-derriere;
             //combat 20-combattre; 21-fuir;
             //objet 30-utiliser objet
+            Dictionary<int, string> codeRetour = new Dictionary<int, string>();
+            codeRetour.Add(10, "devant");
+            codeRetour.Add(11, "gauche");
+            codeRetour.Add(12, "droite");
+            codeRetour.Add(13, "derriere");
+            codeRetour.Add(20, "combattre");
+            codeRetour.Add(21, "fuir");
+            codeRetour.Add(30, "utiliser objet");
+
             var actionsPossibles = new List<string> { };
             switch (piece.Etat)
             {
@@ -426,23 +473,23 @@ namespace HarryPeloteur_BL.Controllers
                             {
                                 if (piece.Portes[i] == 1)
                                 {
-                                    actionsPossibles.Add((i + 10).ToString());
+                                    actionsPossibles.Add(coderetour[i + 10]);
                                 }
                             }
                             break;
                         case 1: //objet
-                            actionsPossibles.Add((30).ToString());
+                            actionsPossibles.Add(coderetour[30]);
                             for (int i = 0; i < 4; i++)
                             {
                                 if (piece.Portes[i] == 1)
                                 {
-                                    actionsPossibles.Add((i + 10).ToString());
+                                    actionsPossibles.Add(coderetour[i + 10]);
                                 }
                             }
                             break;
                         case 2:
-                            actionsPossibles.Add((20).ToString());
-                            actionsPossibles.Add((21).ToString());
+                            actionsPossibles.Add(coderetour[20]);
+                            actionsPossibles.Add(coderetour[20]);
                             break;
                     }
                     break;
@@ -451,7 +498,7 @@ namespace HarryPeloteur_BL.Controllers
                     {
                         if (piece.Portes[i] == 1)
                         {
-                            actionsPossibles.Add((i + 10).ToString());
+                            actionsPossibles.Add(coderetour[i + 10]);
                         }
                     }
                     break;
@@ -461,6 +508,10 @@ namespace HarryPeloteur_BL.Controllers
         }
 
 
+
+
+
+        }
     }
 
     public class LoadedDie
