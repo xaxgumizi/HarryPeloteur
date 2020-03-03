@@ -17,6 +17,6 @@ namespace HarryPeloteur_DAL
 
         public int? DropXp { get; set; }
         public int? DropArgent { get; set; }
-        public float ProbaDropArgent { get; set; }
+        public float? ProbaDropArgent { get; set; }
     }
 }

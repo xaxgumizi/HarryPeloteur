@@ -63,22 +63,23 @@ namespace HarryPeloteur_BL.Controllers
 
             gameInfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
             var text = logicHandler.GenerateDisplayText(gameInfos);
-            text.add(resultText);
+            //text.add(resultText);
 
-            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, text });
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, text, resultText });
         }
 
         [Route("newGame")]
-        public HttpResponseMessage PostNewGame(int id, [FromBody]string characterInfos)
+        public HttpResponseMessage PostNewGame([FromBody]string characterInfos)
         {
-            System.Diagnostics.Debug.WriteLine(characterInfos);
-
-            string name = characterInfos.Substring(characterInfos.length() - 1);
-            int difficulte = Int32.Parse(characterInfos.Substring(0,characterInfos.length()-1));
+            string name = characterInfos.Substring(0,characterInfos.Length - 1);
+            int difficulte = Int32.Parse(characterInfos.Substring(characterInfos.Length-1,1));
             
-            int ID = logicHandler.GenerateNewGame(name, difficulte);
+            int? ID = logicHandler.GenerateNewGame(name, difficulte);
+
             HarryPeloteur_DAL.GameInformationDTO gameInfos = db.GetGameInfos(ID);
-            var text = logicHandler.GenerateDisplayText;
+            dt.dbg("Info avant le generate:");
+            dt.VarDump(gameInfos.Character);
+            var text = logicHandler.GenerateDisplayText(gameInfos);
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, text });
         }
         

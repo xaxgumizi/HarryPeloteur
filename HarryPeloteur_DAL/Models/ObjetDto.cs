@@ -8,10 +8,10 @@ namespace HarryPeloteur_DAL
 {
     public class ObjetDTO
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Nom { get; set; }
         public string Description { get; set; }
         public string ProprieteCible { get; set; }
-        public int Montant { get; set; }
+        public int? Montant { get; set; }
     }
 }

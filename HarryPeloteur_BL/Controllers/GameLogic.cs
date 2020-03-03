@@ -148,6 +148,7 @@ namespace HarryPeloteur_BL.Controllers
 
         public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> Rooms, int? Id)
         {
+            dt.dbg("Looking for room id: " + Id.ToString());
             HarryPeloteur_DAL.SalleDTO found = null;
             int index = 0;
             foreach (var room in Rooms.Select((value, i) => (value, i)))
@@ -197,7 +198,8 @@ namespace HarryPeloteur_BL.Controllers
                     contentId = randomObject.Next();
                     break;
                 case 2: // Il y a un monstre
-                    var randomMonster = new LoadedDie(new int[] { 10, 10, 10, 10, 20, 20, 9, 9, 2 }); // voir table des monstres
+                    //var randomMonster = new LoadedDie(new int[] { 10, 10, 10, 10, 20, 20, 9, 9, 2 }); // voir table des monstres
+                    var randomMonster = new LoadedDie(new int[] { 0, 25, 25, 50 }); // voir table des monstres
                     contentId = randomMonster.Next();
                     break;
             }
@@ -413,16 +415,21 @@ namespace HarryPeloteur_BL.Controllers
                 Portes = new int[] { 0, 1, 1, 0 },
                 Etat = 0
             };
+            
             salle.Id = db.InsertSalle(salle);
+            System.Diagnostics.Debug.WriteLine("new starting room: " + salle.Id.ToString());
             perso.SalleActuelle = salle.Id;
+            dt.VarDump(perso);
             db.UpdatePersonne(perso);
+
+            System.Diagnostics.Debug.WriteLine("Created new game with id "+ partie.Id.ToString());
             return partie.Id;
         }
 
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
         {
-
-            HarryPeloteur_DAL.SalleDTO piece = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle);
+            dt.VarDump(gameInfos.Character);
+            HarryPeloteur_DAL.SalleDTO piece = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
             //la piece actuelle
             var endText = "";
             int champ = 0; // champ de texte traité 0:intro; 1:maintext; 2:outro;

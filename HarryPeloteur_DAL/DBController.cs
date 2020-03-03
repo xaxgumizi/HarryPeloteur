@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +19,29 @@ namespace HarryPeloteur_DAL
             con = new SqlConnection(conString);
             //this.con.Open();
         }
+        public void VarDump(object obj)
+        {
+            System.Diagnostics.Debug.WriteLine("{0,-18} {1}", "Name", "Value");
+            string ln = @"-----------------------------------------------------------------";
+            System.Diagnostics.Debug.WriteLine(ln);
 
+            Type t = obj.GetType();
+            PropertyInfo[] props = t.GetProperties();
+
+            for (int i = 0; i < props.Length; i++)
+            {
+                try
+                {
+                    System.Diagnostics.Debug.WriteLine("{0,-18} {1}",
+                          props[i].Name, props[i].GetValue(obj, null));
+                }
+                catch (Exception e)
+                {
+                    //Console.WriteLine(e);  
+                }
+            }
+            System.Diagnostics.Debug.WriteLine("");
+        }
         public string ArrayToString(int[] arr)
         {
             return string.Join(" ", arr.Select(n => Convert.ToString(n)).ToArray());
@@ -40,6 +63,8 @@ namespace HarryPeloteur_DAL
 
             this.con.Close();
 
+            System.Diagnostics.Debug.WriteLine("created room: " + newId.ToString());
+
             return newId;
         }
         public void UpdateSalle(SalleDTO room)
@@ -60,9 +85,10 @@ namespace HarryPeloteur_DAL
         public bool UpdatePersonne(PersonneDTO p)
         {
             this.con.Open();
-            string q = "update personne set Nom =" + p.Nom +" ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po + " where Id=" + p.Id;
+            string q = "update personne set Nom ='" + p.Nom +"' ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po + ", salle_actuelle="+ p.SalleActuelle + " where Id=" + p.Id;
             SqlCommand cmd = new SqlCommand(q, this.con);
-            
+            System.Diagnostics.Debug.WriteLine("update personne query: " + q);
+            VarDump(p);
             cmd.ExecuteNonQuery();
             
             this.con.Close();
@@ -82,32 +108,32 @@ namespace HarryPeloteur_DAL
 
             while (reader.Read())
             {
-                room.Id = (int)reader.GetValue(0);
+                room.Id = (int?)reader.GetValue(0);
 
                 string coordText = (string)reader.GetValue(1);
                 room.Coordonnees = StringToArray(coordText);
 
-                room.IdContenu = (int)reader.GetValue(2);
+                room.IdContenu = (int?)reader.GetValue(2);
 
-                room.TypeContenu = (int)reader.GetValue(3);
+                room.TypeContenu = (int?)reader.GetValue(3);
 
                 string portesText = (string)reader.GetValue(4);
                 room.Portes = StringToArray(portesText);
 
-                room.Etat = (int)reader.GetValue(5);
+                room.Etat = (int?)reader.GetValue(5);
 
-                room.IdPartie = (int)reader.GetValue(6);
+                room.IdPartie = (int?)reader.GetValue(6);
             }
 
             this.con.Close();
 
-            return (room);
+            return room;
         }
 
         public List<SalleDTO> GetSalles(int? gameId)
         {
             this.con.Open();
-            string commande = "select * from texte";
+            string commande = "select * from salle where id_partie=" + gameId;
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
 
             SqlDataReader reader = cmd1.ExecuteReader();
@@ -143,24 +169,25 @@ namespace HarryPeloteur_DAL
 
         public PersonneDTO GetPersonne(int? id)
         {
+            System.Diagnostics.Debug.WriteLine("looking for personne with id: " + id.ToString());
             this.con.Open();
             string commande = "select * from personne where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
-            db
             SqlDataReader reader = cmd1.ExecuteReader();
 
             PersonneDTO personne = new PersonneDTO();
             while (reader.Read())
-
             {
-                personne.Id = (int)reader.GetValue(0);
+                System.Diagnostics.Debug.WriteLine("found a personne");
+                personne.Id = (int?)reader.GetValue(0);
                 personne.Nom = (string)reader.GetValue(1);
-                personne.Pv = (int)reader.GetValue(2);
-                personne.Force = (int)reader.GetValue(3);
-                personne.Dexterite = (int)reader.GetValue(4);
-                personne.Fuite = (int)reader.GetValue(5);
-                personne.Xp = (int)reader.GetValue(6);
-                personne.Po = (int)reader.GetValue(7);
+                personne.Pv = (int?)reader.GetValue(2);
+                personne.Force = (int?)reader.GetValue(3);
+                personne.Dexterite = (int?)reader.GetValue(4);
+                personne.Fuite = (int?)reader.GetValue(5);
+                personne.Xp = (int?)reader.GetValue(6);
+                personne.Po = (int?)reader.GetValue(7);
+                personne.SalleActuelle = (int?)reader.GetValue(8);
             }
 
             this.con.Close();
@@ -170,6 +197,7 @@ namespace HarryPeloteur_DAL
 
         public PartieDTO GetPartie(int? id)
         {
+            System.Diagnostics.Debug.WriteLine("looking for partie with id: " + id.ToString());
             this.con.Open();
             string commande = "select * from partie where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
@@ -179,19 +207,20 @@ namespace HarryPeloteur_DAL
             PartieDTO game = new PartieDTO();
             while (reader.Read())
             {
-                game.Id = (int)reader.GetValue(0);
-                game.IdPersonnage = (int)reader.GetValue(1);
-                game.Difficulte = (int)reader.GetValue(2);
+                System.Diagnostics.Debug.WriteLine("found partie");
+                game.Id = (int?)reader.GetValue(0);
+                game.IdPersonnage = (int?)reader.GetValue(1);
+                game.Difficulte = (int?)reader.GetValue(2);
             }
 
             this.con.Close();
-            return (game);
+            return game;
         }
 
         public List<PartieDTO> GetParties()
         {
             this.con.Open();
-            string commande = "select * from texte";
+            string commande = "select * from partie";
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
 
             SqlDataReader reader = cmd1.ExecuteReader();
@@ -201,9 +230,9 @@ namespace HarryPeloteur_DAL
             while (reader.Read())
             {
                 PartieDTO game = new PartieDTO();
-                game.Id = (int)reader.GetValue(0);
-                game.IdPersonnage = (int)reader.GetValue(1);
-                game.Difficulte = (int)reader.GetValue(2);
+                game.Id = (int?)reader.GetValue(0);
+                game.IdPersonnage = (int?)reader.GetValue(1);
+                game.Difficulte = (int?)reader.GetValue(2);
 
                 gameList.Add(game);
             }
@@ -239,11 +268,11 @@ namespace HarryPeloteur_DAL
             ObjetDTO objet = new ObjetDTO();
             while(reader.Read())
             {
-                objet.Id = (int)reader.GetValue(0);
+                objet.Id = (int?)reader.GetValue(0);
                 objet.Nom = (string)reader.GetValue(1);
                 objet.Description = (string)reader.GetValue(2);
                 objet.ProprieteCible = (string)reader.GetValue(3);
-                objet.Montant = (int)reader.GetValue(4);
+                objet.Montant = (int?)reader.GetValue(4);
             }
 
             this.con.Close();
@@ -261,31 +290,34 @@ namespace HarryPeloteur_DAL
             MonstreDTO monster = new MonstreDTO();
             while (reader.Read())
             {
-                monster.Id = (int)reader.GetValue(0);
+                monster.Id = (int?)reader.GetValue(0);
                 monster.Nom = (string)reader.GetValue(1);
-                monster.Pv = (int)reader.GetValue(2);
-                monster.Force = (int)reader.GetValue(3);
-                monster.Dexterite = (int)reader.GetValue(4);
-                monster.DropXp = (int)reader.GetValue(5);
-                monster.ProbaDropArgent = (float)reader.GetValue(6);
+                monster.Pv = (int?)reader.GetValue(2);
+                monster.Force = (int?)reader.GetValue(3);
+                monster.Dexterite = (int?)reader.GetValue(4);
+                monster.DropXp = (int?)reader.GetValue(5);
+                monster.ProbaDropArgent = (float?)Convert.ToDouble(reader.GetValue(6));
             }
+
             this.con.Close();
+            VarDump(monster);
             return monster;
         }
 
         public GameInformationDTO GetGameInfos(int? id)
         {
+            System.Diagnostics.Debug.WriteLine("looking for game infos id: " + id.ToString());
             GameInformationDTO gameInfos = new GameInformationDTO();
             gameInfos.Game = this.GetPartie(id);
-            gameInfos.Character = this.GetPersonne(gameInfos.Game.Id);
+            gameInfos.Character = this.GetPersonne(gameInfos.Game.IdPersonnage);
             gameInfos.Rooms = this.GetSalles(gameInfos.Game.Id);
-            return new GameInformationDTO();
+            return gameInfos;
         }
 
         public int InsertPersonne(PersonneDTO perso)
         {
             this.con.Open();
-            string q = "insert into personnage(nom,pv,force,dexterite,fuite,xp,po,salle_actuelle) values('" + perso.Nom + "'," + perso.Pv + "," + perso.Force + "," + perso.Dexterite + "," + perso.Fuite + "," + perso.Xp + "," + perso.Po + "," + perso.SalleActuelle + ") SELECT SCOPE_IDENTITY()";
+            string q = "insert into personne(nom,pv,force,dexterite,fuite,xp,po,salle_actuelle) values('" + perso.Nom + "'," + perso.Pv + "," + perso.Force + "," + perso.Dexterite + "," + perso.Fuite + "," + perso.Xp + "," + perso.Po + "," + perso.SalleActuelle + ") SELECT SCOPE_IDENTITY()";
             SqlCommand cmd = new SqlCommand(q, this.con);
 
             var newId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -298,7 +330,7 @@ namespace HarryPeloteur_DAL
         public int InsertPartie(PartieDTO partie)
         {
             this.con.Open();
-            string q = "insert into personnage(id_personnage,difficulte) values(" + partie.IdPersonnage + "," + partie.Difficulte + ") SELECT SCOPE_IDENTITY()";
+            string q = "insert into partie(id_personnage,difficulte) values(" + partie.IdPersonnage + "," + partie.Difficulte + ") SELECT SCOPE_IDENTITY()";
             SqlCommand cmd = new SqlCommand(q, this.con);
 
             var newId = Convert.ToInt32(cmd.ExecuteScalar());
