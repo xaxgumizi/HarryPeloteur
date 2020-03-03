@@ -87,7 +87,7 @@ namespace HarryPeloteur_DAL
 
                 room.TypeContenu = (int)reader.GetValue(3);
 
-                string portesText = (string)reader.GetValue(4); // par exemple si j'ai 1000 tabDoors[0]=0 , tabDoors[1]=0 ,tabDoors[2]=0 ,tabDoors[3]=1 , 
+                string portesText = (string)reader.GetValue(4);
                 room.Portes = StringToArray(portesText);
 
                 room.Etat = (int)reader.GetValue(5);
@@ -112,9 +112,22 @@ namespace HarryPeloteur_DAL
             while (reader.Read())
             {
                 SalleDTO room = new SalleDTO();
+
                 room.Id = (int)reader.GetValue(0);
-                room.IdPersonnage = (int)reader.GetValue(1);
-                room.Difficulte = (int)reader.GetValue(2);
+
+                string coordText = (string)reader.GetValue(1);
+                room.Coordonnees = StringToArray(coordText);
+
+                room.IdContenu = (int)reader.GetValue(2);
+
+                room.TypeContenu = (int)reader.GetValue(3);
+
+                string portesText = (string)reader.GetValue(4);
+                room.Portes = StringToArray(portesText);
+
+                room.Etat = (int)reader.GetValue(5);
+
+                room.IdPartie = (int)reader.GetValue(6);
 
                 roomList.Add(room);
             }
