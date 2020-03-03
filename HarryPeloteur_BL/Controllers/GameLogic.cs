@@ -125,12 +125,12 @@ namespace HarryPeloteur_BL.Controllers
                     newRoom.Portes[oppposingDirections[direction]] = 1;
 
                     // On insère dans la BDD la nouvelle salle
-                    db.InsertRoom(newRoom);
+                    db.InsertSalle(newRoom);
 
                     // On récupère de nouveau les salles pour avoir l'Id de la salle que l'on vient d'insérer
                     gameInfos.Rooms = db.GetSalles(gameInfos.Game.Id);
                     // On considère que les résultats sont triés par Id croissant, donc on prend la dernière salle
-                    int newRoomId = gameInfos.Rooms.Last().Id;
+                    int? newRoomId = gameInfos.Rooms.Last().Id;
 
                     // On déplace le personnage dans la nouvelle salle
                     gameInfos.Character.SalleActuelle = newRoomId;
@@ -146,7 +146,7 @@ namespace HarryPeloteur_BL.Controllers
             }
         }
 
-        public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> Rooms, int Id)
+        public dynamic FindRoomById(List<HarryPeloteur_DAL.SalleDTO> Rooms, int? Id)
         {
             HarryPeloteur_DAL.SalleDTO found = null;
             int index = 0;
@@ -167,11 +167,8 @@ namespace HarryPeloteur_BL.Controllers
             dt.dbg("Call to find room by coordinates");
             HarryPeloteur_DAL.SalleDTO found = null;
 
-            //dt.PrintArray(coordinates);
-
             foreach (HarryPeloteur_DAL.SalleDTO room in Rooms)
             {
-                //dt.PrintArray(room.Coordonnees);
                 if (room.Coordonnees[0] == coordinates[0] && room.Coordonnees[1] == coordinates[1])
                 {
                     found = room;
@@ -236,12 +233,10 @@ namespace HarryPeloteur_BL.Controllers
             HarryPeloteur_DAL.MonstreDTO currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // On détermine les chances de toucher en fonction de la dextérité
-            //double playerHitChance = 0.5 * Math.Pow((double)gameInfos.Character.Dexterite / (double)currentMonster.Dexterite, 2);
             double playerHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)gameInfos.Character.Dexterite - (double)currentMonster.Dexterite) / (double)currentMonster.Dexterite));
             double monsterHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)currentMonster.Dexterite - (double)gameInfos.Character.Dexterite) / (double)gameInfos.Character.Dexterite));
             // ajouter une fonction pour faire ça
             // diviser par deux l'augmentation de la chance ?
-            // mettre un plafond de 90%
             dt.VarDump(currentMonster);
             dt.dbg(gameInfos.Character.Dexterite.ToString());
             dt.dbg(currentMonster.Dexterite.ToString());
@@ -307,7 +302,8 @@ namespace HarryPeloteur_BL.Controllers
             var currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // Calcule la chance de s'échapper selon les caractéristiques du joueur et du monstre avec un minimum de 20%
-            var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite)/gameInfos.Character.Fuite);
+            //var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite) / Convert.ToSByte(gameInfos.Character.Fuite));
+            var escapeChance = 0.9;
             
             while(gameInfos.Character.Pv > 0)
             {
@@ -388,39 +384,39 @@ namespace HarryPeloteur_BL.Controllers
         {
             HarryPeloteur_DAL.PersonneDTO perso = new HarryPeloteur_DAL.PersonneDTO()
             {
-                IDictionary = 0,
+                Id = 0,
                 SalleActuelle = 0,
                 Nom = nomPerso,
-                PV = 10,
+                Pv = 10,
                 Force = 10,
                 Fuite = 10,
                 Dexterite = 10,
-                XP = 10,
+                Xp = 10,
                 Po = 10
             };
-            perso.ID = HarryPeloteur_DAL.DBController.InsertPersonne(perso);
+            perso.Id = db.InsertPersonne(perso);
 
             HarryPeloteur_DAL.PartieDTO partie = new HarryPeloteur_DAL.PartieDTO() 
             {
-                ID = 0,
-                IDPersonnage = perso.ID,
+                Id = 0,
+                IdPersonnage = perso.Id,
                 Difficulte = difficultePartie
             };
-            partie.ID = HarryPeloteur_DAL.DBController.InsertPartie(partie);
+            partie.Id = db.InsertPartie(partie);
             HarryPeloteur_DAL.SalleDTO salle = new HarryPeloteur_DAL.SalleDTO() 
             {
-                ID = 0,
-                IDPartie = partie.ID,
+                Id = 0,
+                IdPartie = partie.Id,
                 Coordonnees = new int[] { 0, 0 },
-                IDContenu = 0,
+                IdContenu = 0,
                 TypeContenu = 0,
                 Portes = new int[] { 0, 1, 1, 0 },
                 Etat = 0
             };
-            salle.ID = HarryPeloteur_DAL.DBController.InsertSalle(salle);
-            perso.SalleActuelle = salle.ID;
-            HarryPeloteur_DAL.DBController.UpdatePersonne(perso);
-            return partie.ID;
+            salle.Id = db.InsertSalle(salle);
+            perso.SalleActuelle = salle.Id;
+            db.UpdatePersonne(perso);
+            return partie.Id;
          }
 
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
@@ -489,23 +485,23 @@ namespace HarryPeloteur_BL.Controllers
                             {
                                 if (piece.Portes[i] == 1)
                                 {
-                                    actionsPossibles.Add(coderetour[i + 10]);
+                                    actionsPossibles.Add(codeRetour[i + 10]);
                                 }
                             }
                             break;
                         case 1: //objet
-                            actionsPossibles.Add(coderetour[30]);
+                            actionsPossibles.Add(codeRetour[30]);
                             for (int i = 0; i < 4; i++)
                             {
                                 if (piece.Portes[i] == 1)
                                 {
-                                    actionsPossibles.Add(coderetour[i + 10]);
+                                    actionsPossibles.Add(codeRetour[i + 10]);
                                 }
                             }
                             break;
                         case 2:
-                            actionsPossibles.Add(coderetour[20]);
-                            actionsPossibles.Add(coderetour[20]);
+                            actionsPossibles.Add(codeRetour[20]);
+                            actionsPossibles.Add(codeRetour[20]);
                             break;
                     }
                     break;
@@ -514,7 +510,7 @@ namespace HarryPeloteur_BL.Controllers
                     {
                         if (piece.Portes[i] == 1)
                         {
-                            actionsPossibles.Add(coderetour[i + 10]);
+                            actionsPossibles.Add(codeRetour[i + 10]);
                         }
                     }
                     break;
@@ -524,10 +520,6 @@ namespace HarryPeloteur_BL.Controllers
         }
 
 
-
-
-
-        }
     }
 
     public class LoadedDie

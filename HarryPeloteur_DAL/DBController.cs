@@ -16,112 +16,139 @@ namespace HarryPeloteur_DAL
         public DBController()
         {
             con = new SqlConnection(conString);
-            this.con.Open();
+            //this.con.Open();
         }
 
-        public string ArrayToString(int[] array)
+        public string ArrayToString(int[] arr)
         {
-            string newString = "";
-            foreach (int i in array)
-            {
-                newString += i.ToString();
-            }
-            return newString;
+            return string.Join(" ", arr.Select(n => Convert.ToString(n)).ToArray());
         }
         public int[] StringToArray(string str)
         {
-            int[] newArray = new int[] { };
-            int len = str.Length;
-            for (int i = 0; i < len; i++)
-            {
-                newArray.Append((int)str[i]);
-            }
-            return newArray;
+            return str.Split(' ').Select(n => Convert.ToInt32(n)).ToArray();
         }
-        public int InsertRoom(SalleDTO salle)
+        public int InsertSalle(SalleDTO room)
         {
-            string coordText = ArrayToString(salle.Coordonnees);
-            string portesText = ArrayToString(salle.Portes);
-            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values(" + coordText +","+salle.IdContenu+","+salle.TypeContenu+","+portesText+","+salle.Etat+","+salle.IdPartie+ ") SELECT SCOPE_IDENTITY()";
-            SqlCommand cmd = new SqlCommand(q, this.con);
-            int newId = (int)cmd.ExecuteScalar();
+            this.con.Open();
+            string coordText = ArrayToString(room.Coordonnees);
+            string portesText = ArrayToString(room.Portes);
 
-            con.Close();
+            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values('" + coordText + "'," + room.IdContenu + "," + room.TypeContenu + ",'" + portesText + "'," + room.Etat + "," + room.IdPartie + ") SELECT SCOPE_IDENTITY()";
+            SqlCommand cmd = new SqlCommand(q, this.con);
+
+            var newId = Convert.ToInt32(cmd.ExecuteScalar());
+
+            this.con.Close();
+
             return newId;
         }
-        public void UpdateRoom(SalleDTO salle)
+        public void UpdateSalle(SalleDTO room)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
-            string q = "update salle set coordonneeX =" + salle.coordonneeX + " ,coordonneeY=" + salle.coordonneeY + " ,id_contenu=" + salle.id_contenu + " ,type_contenu=" + salle.type_contenu + " ,portes=" + salle.portes + " ,etat=" + salle.etat + ", id_partie=" + salle.id_partie + " where Id=" + salle.Id;
-            SqlCommand cmd = new SqlCommand(q, con);
+            this.con.Open();
+            string coordText = ArrayToString(room.Coordonnees);
+            string portesText = ArrayToString(room.Portes);
+
+            string q = "update salle set coordonnees ='" + coordText + "' ,id_contenu=" + room.IdContenu + " ,type_contenu=" + room.TypeContenu + " ,portes='" + portesText + "' ,etat=" + room.Etat + ", id_partie=" + room.IdPartie + " where Id=" + room.Id;
+            SqlCommand cmd = new SqlCommand(q, this.con);
+            
             cmd.ExecuteNonQuery();
-            con.Close();
+
+            this.con.Close();
 
         }
 
         public bool UpdatePersonne(PersonneDTO p)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
+            this.con.Open();
             string q = "update personne set Nom =" + p.Nom +" ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po + " where Id=" + p.Id;
-            SqlCommand cmd = new SqlCommand(q, con);
+            SqlCommand cmd = new SqlCommand(q, this.con);
+            
             cmd.ExecuteNonQuery();
-            con.Close();
+            
+            this.con.Close();
 
             return true;
         }
 
-        public SalleDTO GetSalle(int id)
+        public SalleDTO GetSalle(int? id)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
-
+            this.con.Open();
             string commande = "select * from salle where Id=" + id;
-            SqlCommand cmd1 = new SqlCommand(commande, con);
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
             SqlDataReader reader = cmd1.ExecuteReader();
-            SalleDTO salle = new SalleDTO();
+
+            SalleDTO room = new SalleDTO();
 
             while (reader.Read())
             {
-                salle.Id = (int)reader.GetValue(0);
-                salle.coordonneeX = (int)reader.GetValue(1);
-                salle.coordonneeY = (int)reader.GetValue(2);
-                salle.id_contenu = (int)reader.GetValue(3);
-                salle.type_contenu = (int)reader.GetValue(4);
-                salle.portes = (string)reader.GetValue(5);
-                salle.etat = (int)reader.GetValue(6);
-                salle.id_partie = (int)reader.GetValue(7);
+                room.Id = (int)reader.GetValue(0);
+
+                string coordText = (string)reader.GetValue(1);
+                room.Coordonnees = StringToArray(coordText);
+
+                room.IdContenu = (int)reader.GetValue(2);
+
+                room.TypeContenu = (int)reader.GetValue(3);
+
+                string portesText = (string)reader.GetValue(4);
+                room.Portes = StringToArray(portesText);
+
+                room.Etat = (int)reader.GetValue(5);
+
+                room.IdPartie = (int)reader.GetValue(6);
             }
 
-            Console.WriteLine(salle.Id + " " + salle.coordonneeX);
-            Console.ReadLine();
+            this.con.Close();
 
-            con.Close();
-
-
-
-            return (salle);
+            return (room);
         }
 
-        public List<SalleDTO> GetSalles(int gameId)
+        public List<SalleDTO> GetSalles(int? gameId)
         {
-            return new List<SalleDTO>();
-        }
+            this.con.Open();
+            string commande = "select * from texte";
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
 
-        public PersonneDTO GetPersonne(int id)
-        {
-
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
-
-            string commande = "select * from personne where Id=" + id;
-            SqlCommand cmd1 = new SqlCommand(commande, con);
             SqlDataReader reader = cmd1.ExecuteReader();
+
+            List<SalleDTO> roomList = new List<SalleDTO>();
+
+            while (reader.Read())
+            {
+                SalleDTO room = new SalleDTO();
+
+                room.Id = (int?)reader.GetValue(0);
+
+                string coordText = (string)reader.GetValue(1);
+                room.Coordonnees = StringToArray(coordText);
+
+                room.IdContenu = (int?)reader.GetValue(2);
+
+                room.TypeContenu = (int?)reader.GetValue(3);
+
+                string portesText = (string)reader.GetValue(4);
+                room.Portes = StringToArray(portesText);
+
+                room.Etat = (int?)reader.GetValue(5);
+
+                room.IdPartie = (int?)reader.GetValue(6);
+
+                roomList.Add(room);
+            }
+
+            this.con.Close();
+            return roomList;
+        }
+
+        public PersonneDTO GetPersonne(int? id)
+        {
+            this.con.Open();
+            string commande = "select * from personne where Id=" + id;
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+            db
+            SqlDataReader reader = cmd1.ExecuteReader();
+
             PersonneDTO personne = new PersonneDTO();
             while (reader.Read())
 
@@ -136,64 +163,66 @@ namespace HarryPeloteur_DAL
                 personne.Po = (int)reader.GetValue(7);
             }
 
-            Console.WriteLine(personne.Id);
-            Console.ReadLine();
+            this.con.Close();
 
-            con.Close();
-            return (personne);
-
+            return personne;
         }
 
-        public PartieDTO GetPartie(int id)
+        public PartieDTO GetPartie(int? id)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
-
+            this.con.Open();
             string commande = "select * from partie where Id=" + id;
-            SqlCommand cmd1 = new SqlCommand(commande, con);
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
             SqlDataReader reader = cmd1.ExecuteReader();
-            PartieDTO partie = new PartieDTO();
+
+            PartieDTO game = new PartieDTO();
             while (reader.Read())
-
             {
-                partie.Id = (int)reader.GetValue(0);
-                partie.IdPersonnage = (int)reader.GetValue(1);
-                partie.Difficulte = (int)reader.GetValue(2);
-
+                game.Id = (int)reader.GetValue(0);
+                game.IdPersonnage = (int)reader.GetValue(1);
+                game.Difficulte = (int)reader.GetValue(2);
             }
 
-            Console.WriteLine(partie.Id);
-            Console.ReadLine();
-
-            con.Close();
-            return (partie);
+            this.con.Close();
+            return (game);
         }
 
         public List<PartieDTO> GetParties()
         {
-            return new List<PartieDTO>();
-        }
-        public string GetTexte(int type)
-        {
-            //string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            //SqlConnection con = new SqlConnection(conString);
-            //con.Open();
-
-            string commande = "select * from texte where Id=" + type;
+            this.con.Open();
+            string commande = "select * from texte";
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
             SqlDataReader reader = cmd1.ExecuteReader();
-            
+
+            List<PartieDTO> gameList = new List<PartieDTO>();
+
             while (reader.Read())
             {
-                
-                string contenu;
-                contenu = (string)reader.GetValue(2);
-                Console.WriteLine(contenu);
-                Console.ReadLine();
+                PartieDTO game = new PartieDTO();
+                game.Id = (int)reader.GetValue(0);
+                game.IdPersonnage = (int)reader.GetValue(1);
+                game.Difficulte = (int)reader.GetValue(2);
 
+                gameList.Add(game);
             }
 
+            this.con.Close();
+            return gameList;
+        }
+        public string GetTexte(int? type)
+        {
+            this.con.Open();
+            string commande = "select * from texte where Id=" + type;
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
+            SqlDataReader reader = cmd1.ExecuteReader();
+            
+            while(reader.Read())
+            {
+                string contenu = (string)reader.GetValue(2);
+            }
 
             this.con.Close();
             return contenu;
@@ -201,17 +230,83 @@ namespace HarryPeloteur_DAL
 
         public ObjetDTO GetObjet(int? id)
         {
-            return new ObjetDTO();
+            this.con.Open();
+            string commande = "select * from objet where Id=" + id;
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
+            SqlDataReader reader = cmd1.ExecuteReader();
+
+            ObjetDTO objet = new ObjetDTO();
+            while(reader.Read())
+            {
+                objet.Id = (int)reader.GetValue(0);
+                objet.Nom = (string)reader.GetValue(1);
+                objet.Description = (string)reader.GetValue(2);
+                objet.ProprieteCible = (string)reader.GetValue(3);
+                objet.Montant = (int)reader.GetValue(4);
+            }
+
+            this.con.Close();
+            return objet;
         }
 
         public MonstreDTO GetMonstre(int? id)
         {
-            return new MonstreDTO();
+            this.con.Open();
+            string commande = "select * from monstre where Id=" + id;
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
+            SqlDataReader reader = cmd1.ExecuteReader();
+
+            MonstreDTO monster = new MonstreDTO();
+            while (reader.Read())
+            {
+                monster.Id = (int)reader.GetValue(0);
+                monster.Nom = (string)reader.GetValue(1);
+                monster.Pv = (int)reader.GetValue(2);
+                monster.Force = (int)reader.GetValue(3);
+                monster.Dexterite = (int)reader.GetValue(4);
+                monster.DropXp = (int)reader.GetValue(5);
+                monster.ProbaDropArgent = (float)reader.GetValue(6);
+            }
+            this.con.Close();
+            return monster;
         }
 
         public GameInformationDTO GetGameInfos(int? id)
         {
+            GameInformationDTO gameInfos = new GameInformationDTO();
+            gameInfos.Game = this.GetPartie(id);
+            gameInfos.Character = this.GetPersonne(gameInfos.Game.Id);
+            gameInfos.Rooms = this.GetSalles(gameInfos.Game.Id);
             return new GameInformationDTO();
         }
+
+        public int InsertPersonne(PersonneDTO perso)
+        {
+            this.con.Open();
+            string q = "insert into personnage(nom,pv,force,dexterite,fuite,xp,po,salle_actuelle) values('" + perso.Nom + "'," + perso.Pv + "," + perso.Force + "," + perso.Dexterite + "," + perso.Fuite + "," + perso.Xp + "," + perso.Po + "," + perso.SalleActuelle + ") SELECT SCOPE_IDENTITY()";
+            SqlCommand cmd = new SqlCommand(q, this.con);
+
+            var newId = Convert.ToInt32(cmd.ExecuteScalar());
+
+            this.con.Close();
+
+            return newId;
+        }
+
+        public int InsertPartie(PartieDTO partie)
+        {
+            this.con.Open();
+            string q = "insert into personnage(id_personnage,difficulte) values(" + partie.IdPersonnage + "," + partie.Difficulte + ") SELECT SCOPE_IDENTITY()";
+            SqlCommand cmd = new SqlCommand(q, this.con);
+
+            var newId = Convert.ToInt32(cmd.ExecuteScalar());
+
+            this.con.Close();
+
+            return newId;
+        }
+
     }
 }
