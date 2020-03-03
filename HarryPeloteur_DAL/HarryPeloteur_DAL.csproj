@@ -48,7 +48,6 @@
     <Compile Include="Models\ObjetDTO.cs" />
     <Compile Include="Models\PartieDTO.cs" />
     <Compile Include="Models\PersonneDTO.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DBController.cs" />
     <Compile Include="Models\SalleDTO.cs" />

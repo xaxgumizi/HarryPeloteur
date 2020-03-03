@@ -109,11 +109,13 @@ namespace HarryPeloteur_BL.Controllers
                 if (existingroom != null) // Si il existe déjà une salle à cet emplacement
                 {
                     dt.dbg("La salle existe pour le déplacement");
+                    resultText = "Vous connaissez cette salle";
                     gameInfos.Character.SalleActuelle = existingroom.Id; // Alors on déplace juste le personnage dedans
                 }
                 else // Sinon on doit générer une nouvelle salle
                 {
                     dt.dbg("On créé une salle pour le déplacement");
+                    resultText = "Vous découvrez une nouvelle salle";
                     // La porte opposée de celle d'où l'on vient
                     int[] oppposingDirections = { 2, 3, 0, 1 };
 
@@ -135,7 +137,7 @@ namespace HarryPeloteur_BL.Controllers
                     // On déplace le personnage dans la nouvelle salle
                     gameInfos.Character.SalleActuelle = newRoomId;
                 }
-                resultText = "vous étes dans une nouvelle salle";
+                resultText = "";
                 db.UpdatePersonne(gameInfos.Character); // On met à jour dans la BDD le personnage
                 return resultText;
             }
@@ -198,8 +200,7 @@ namespace HarryPeloteur_BL.Controllers
                     contentId = randomObject.Next();
                     break;
                 case 2: // Il y a un monstre
-                    //var randomMonster = new LoadedDie(new int[] { 10, 10, 10, 10, 20, 20, 9, 9, 2 }); // voir table des monstres
-                    var randomMonster = new LoadedDie(new int[] { 0, 25, 25, 50 }); // voir table des monstres
+                    var randomMonster = new LoadedDie(new int[] { 10, 10, 10, 10, 20, 20, 9, 9, 2 }); // voir table des monstres
                     contentId = randomMonster.Next();
                     break;
             }
@@ -274,12 +275,12 @@ namespace HarryPeloteur_BL.Controllers
             if (gameInfos.Character.Pv <= 0)
             {
                 dt.dbg("Le joueur est mort tué par un " + currentMonster.Nom);
-                resultText = "Le joueur est mort tué par un " + currentMonster.Nom;
+                resultText = "Vous êtes mort tué par un " + currentMonster.Nom;
             }
             else
             {
                 dt.dbg("Le joueur a tué un " + currentMonster.Nom);
-                resultText = "Le joueur a tué un " + currentMonster.Nom;
+                resultText = "Vous avez tué un " + currentMonster.Nom;
             }
 
             // On met à jour la vie du joueur
@@ -320,7 +321,7 @@ namespace HarryPeloteur_BL.Controllers
                 {
                     dt.dbg("Le joueur a réussi à s'échapper");
                     // Sinon on sort vers une salle aléatoire
-                    resultText = "Le joueur a réussi à s'échapper";
+                    resultText = "Vous avez réussi à vous échapper";
                     // modifier l'état de la salle actuelle vers un état intermédiaire pour passer le check dans le handleavancer
                     gameInfos.Rooms[currentRoomID].Etat = 2;
                     resultText += HandleAvancer(gameInfos, new string[] { "", "random" });
@@ -412,25 +413,22 @@ namespace HarryPeloteur_BL.Controllers
                 Coordonnees = new int[] { 0, 0 },
                 IdContenu = 0,
                 TypeContenu = 0,
-                Portes = new int[] { 0, 1, 1, 0 },
+                Portes = new int[] { 1, 1, 1, 1 },
                 Etat = 0
             };
             
             salle.Id = db.InsertSalle(salle);
-            System.Diagnostics.Debug.WriteLine("new starting room: " + salle.Id.ToString());
             perso.SalleActuelle = salle.Id;
             dt.VarDump(perso);
             db.UpdatePersonne(perso);
 
-            System.Diagnostics.Debug.WriteLine("Created new game with id "+ partie.Id.ToString());
             return partie.Id;
         }
 
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
         {
             dt.VarDump(gameInfos.Character);
-            HarryPeloteur_DAL.SalleDTO piece = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
-            //la piece actuelle
+            HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
             var endText = "";
             int champ = 0; // champ de texte traité 0:intro; 1:maintext; 2:outro;
             int type = 0;
@@ -449,7 +447,7 @@ namespace HarryPeloteur_BL.Controllers
                         break;
                     case 1:
                         type = 1;
-                        switch (piece.TypeContenu)
+                        switch (currentRoom.TypeContenu)
                         {//on filtre par contenu de a salle pour demander le texte correspondant
                             case 1: //objet
                                 type = 2;
@@ -473,24 +471,24 @@ namespace HarryPeloteur_BL.Controllers
             //combat 20-combattre; 21-fuir;
             //objet 30-utiliser objet
             Dictionary<int, string> codeRetour = new Dictionary<int, string>();
-            codeRetour.Add(10, "devant");
-            codeRetour.Add(11, "gauche");
-            codeRetour.Add(12, "droite");
-            codeRetour.Add(13, "derriere");
+            codeRetour.Add(10, "avancer haut");
+            codeRetour.Add(11, "avancer droite");
+            codeRetour.Add(12, "avancer bas");
+            codeRetour.Add(13, "avancer gauche");
             codeRetour.Add(20, "combattre");
             codeRetour.Add(21, "fuir");
-            codeRetour.Add(30, "utiliser objet");
+            codeRetour.Add(30, "ramasser");
 
             var actionsPossibles = new List<string> { };
-            switch (piece.Etat)
+            switch (currentRoom.Etat)
             {
                 case 0: //salle non terminée
-                    switch (piece.TypeContenu)
+                    switch (currentRoom.TypeContenu)
                     {
                         case 0: //rien
                             for (int i = 0; i < 4; i++)
                             {
-                                if (piece.Portes[i] == 1)
+                                if (currentRoom.Portes[i] == 1)
                                 {
                                     actionsPossibles.Add(codeRetour[i + 10]);
                                 }
@@ -500,7 +498,7 @@ namespace HarryPeloteur_BL.Controllers
                             actionsPossibles.Add(codeRetour[30]);
                             for (int i = 0; i < 4; i++)
                             {
-                                if (piece.Portes[i] == 1)
+                                if (currentRoom.Portes[i] == 1)
                                 {
                                     actionsPossibles.Add(codeRetour[i + 10]);
                                 }
@@ -515,7 +513,7 @@ namespace HarryPeloteur_BL.Controllers
                 case 1: //salle terminée
                     for (int i = 0; i < 4; i++)
                     {
-                        if (piece.Portes[i] == 1)
+                        if (currentRoom.Portes[i] == 1)
                         {
                             actionsPossibles.Add(codeRetour[i + 10]);
                         }

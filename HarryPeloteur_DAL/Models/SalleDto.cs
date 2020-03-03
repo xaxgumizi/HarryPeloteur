@@ -16,6 +16,5 @@ namespace HarryPeloteur_DAL
         public int? Etat { get; set; }
         public int? IdPartie { get; set; }
 
-        public virtual PartieDTO PartieDto { get; set; }
     }
 }

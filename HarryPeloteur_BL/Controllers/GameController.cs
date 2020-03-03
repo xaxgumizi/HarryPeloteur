@@ -35,7 +35,7 @@ namespace HarryPeloteur_BL.Controllers
         [Route("game/{id}")]
         public HttpResponseMessage PutGame(int id, [FromBody]string command)
         {
-            System.Diagnostics.Debug.WriteLine(command);
+            System.Diagnostics.Debug.WriteLine("Commande reçue: " + command);
 
             var gameInfos = db.GetGameInfos(id); // Obtient les informations actuelles sur la partie
             string resultText = "";

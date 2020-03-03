@@ -63,7 +63,6 @@ namespace HarryPeloteur_DAL
 
             this.con.Close();
 
-            System.Diagnostics.Debug.WriteLine("created room: " + newId.ToString());
 
             return newId;
         }
@@ -87,8 +86,6 @@ namespace HarryPeloteur_DAL
             this.con.Open();
             string q = "update personne set Nom ='" + p.Nom +"' ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po + ", salle_actuelle="+ p.SalleActuelle + " where Id=" + p.Id;
             SqlCommand cmd = new SqlCommand(q, this.con);
-            System.Diagnostics.Debug.WriteLine("update personne query: " + q);
-            VarDump(p);
             cmd.ExecuteNonQuery();
             
             this.con.Close();
@@ -169,7 +166,6 @@ namespace HarryPeloteur_DAL
 
         public PersonneDTO GetPersonne(int? id)
         {
-            System.Diagnostics.Debug.WriteLine("looking for personne with id: " + id.ToString());
             this.con.Open();
             string commande = "select * from personne where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
@@ -178,7 +174,6 @@ namespace HarryPeloteur_DAL
             PersonneDTO personne = new PersonneDTO();
             while (reader.Read())
             {
-                System.Diagnostics.Debug.WriteLine("found a personne");
                 personne.Id = (int?)reader.GetValue(0);
                 personne.Nom = (string)reader.GetValue(1);
                 personne.Pv = (int?)reader.GetValue(2);
@@ -197,7 +192,6 @@ namespace HarryPeloteur_DAL
 
         public PartieDTO GetPartie(int? id)
         {
-            System.Diagnostics.Debug.WriteLine("looking for partie with id: " + id.ToString());
             this.con.Open();
             string commande = "select * from partie where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
@@ -207,7 +201,6 @@ namespace HarryPeloteur_DAL
             PartieDTO game = new PartieDTO();
             while (reader.Read())
             {
-                System.Diagnostics.Debug.WriteLine("found partie");
                 game.Id = (int?)reader.GetValue(0);
                 game.IdPersonnage = (int?)reader.GetValue(1);
                 game.Difficulte = (int?)reader.GetValue(2);
@@ -306,7 +299,6 @@ namespace HarryPeloteur_DAL
 
         public GameInformationDTO GetGameInfos(int? id)
         {
-            System.Diagnostics.Debug.WriteLine("looking for game infos id: " + id.ToString());
             GameInformationDTO gameInfos = new GameInformationDTO();
             gameInfos.Game = this.GetPartie(id);
             gameInfos.Character = this.GetPersonne(gameInfos.Game.IdPersonnage);
