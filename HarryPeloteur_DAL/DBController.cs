@@ -107,14 +107,11 @@ namespace HarryPeloteur_DAL
 
         public PersonneDTO GetPersonne(int id)
         {
-
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
-
             string commande = "select * from personne where Id=" + id;
             SqlCommand cmd1 = new SqlCommand(commande, con);
+
             SqlDataReader reader = cmd1.ExecuteReader();
+
             PersonneDTO personne = new PersonneDTO();
             while (reader.Read())
 
@@ -129,12 +126,9 @@ namespace HarryPeloteur_DAL
                 personne.Po = (int)reader.GetValue(7);
             }
 
-            Console.WriteLine(personne.Id);
-            Console.ReadLine();
+            this.con.Close();
 
-            con.Close();
-            return (personne);
-
+            return personne;
         }
 
         public PartieDTO GetPartie(int id)
