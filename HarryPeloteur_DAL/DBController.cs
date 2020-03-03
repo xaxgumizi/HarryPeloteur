@@ -19,24 +19,13 @@ namespace HarryPeloteur_DAL
             this.con.Open();
         }
 
-        public string ArrayToString(int[] array)
+        public string ArrayToString(int[] arr)
         {
-            string newString = "";
-            foreach (int i in array)
-            {
-                newString += i.ToString();
-            }
-            return newString;
+            return string.Join(" ", arr.Select(n => Convert.ToString(n)).ToArray());
         }
         public int[] StringToArray(string str)
         {
-            int[] newArray = new int[] { };
-            int len = str.Length;
-            for (int i = 0; i < len; i++)
-            {
-                newArray.Append((int)str[i]);
-            }
-            return newArray;
+            return str.Split(' ').Select(n => Convert.ToInt32(n)).ToArray();
         }
         public int InsertRoom(SalleDTO salle)
         {
@@ -45,6 +34,7 @@ namespace HarryPeloteur_DAL
             string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values(" + coordText +","+salle.IdContenu+","+salle.TypeContenu+","+portesText+","+salle.Etat+","+salle.IdPartie+ ") SELECT SCOPE_IDENTITY()";
             SqlCommand cmd = new SqlCommand(q, this.con);
             int newId = (int)cmd.ExecuteScalar();
+
 
             con.Close();
             return newId;
@@ -74,7 +64,7 @@ namespace HarryPeloteur_DAL
             return true;
         }
 
-        public SalleDTO getSalle(int id)
+        public SalleDTO GetSalle(int id)
         {
             con.Open();
             string commande = "select * from salle where Id=" + id;
