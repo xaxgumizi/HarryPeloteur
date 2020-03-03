@@ -21,8 +21,9 @@ namespace HarryPeloteur_BL.Controllers
         // Obligé car on ne connait pas le nouvel ID dans la BDD avant l'insertion
         // On redemande les infos depuis la BDD
 
-        public void HandleAvancer(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
+        public string HandleAvancer(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
+            string resultText = "";
             dt.dbg("Call to avancer");
             if(parameters.Count() < 2)
             {
@@ -134,8 +135,9 @@ namespace HarryPeloteur_BL.Controllers
                     // On déplace le personnage dans la nouvelle salle
                     gameInfos.Character.SalleActuelle = newRoomId;
                 }
-
+                resultText = "vous étes dans une nouvelle salle";
                 db.UpdatePersonne(gameInfos.Character); // On met à jour dans la BDD le personnage
+                return resultText;
             }
             else // Sinon on ne peut pas aller là
             {
@@ -218,11 +220,11 @@ namespace HarryPeloteur_BL.Controllers
             return room;
         }
 
-        public void HandleCombattre(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] paramaters)
+        public string HandleCombattre(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] paramaters)
         {
             HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
-
-            if(currentRoom.TypeContenu != 2)
+            string resultText = "";
+            if (currentRoom.TypeContenu != 2)
             {
                 dt.dbg("Impossible de combattre dans une salle sans monstres");
                 return;
@@ -270,22 +272,25 @@ namespace HarryPeloteur_BL.Controllers
             if(gameInfos.Character.Pv <= 0)
             {
                 dt.dbg("Le joueur est mort tué par un " + currentMonster.Nom);
+                resultText = "Le joueur est mort tué par un " + currentMonster.Nom;
             }
             else
             {
-                dt.dbg("Le joueur a touché un " + currentMonster.Nom);
+                dt.dbg("Le joueur a tué un " + currentMonster.Nom);
+                resultText = "Le joueur a tué un " + currentMonster.Nom;
             }
 
             // On met à jour la vie du joueur
             db.UpdatePersonne(gameInfos.Character);
+            return resultText;
         }
 
-        public void HandleFuir(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
+        public string HandleFuir(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
             var roomSearch = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle);
             HarryPeloteur_DAL.SalleDTO currentRoom = roomSearch.found;
             int currentRoomID = roomSearch.index;
-
+            string resultText = "";
             // Si la salle actuelle ne contient pas de monstre on annule l'action
             if (currentRoom.TypeContenu != 2)
             {
@@ -313,10 +318,10 @@ namespace HarryPeloteur_BL.Controllers
                 {
                     dt.dbg("Le joueur a réussi à s'échapper");
                     // Sinon on sort vers une salle aléatoire
-
+                    resultText = "Le joueur a réussi à s'échapper";
                     // modifier l'état de la salle actuelle vers un état intermédiaire pour passer le check dans le handleavancer
                     gameInfos.Rooms[currentRoomID].Etat = 2;
-                    HandleAvancer(gameInfos, new string[] { "", "random" });
+                    resultText+=HandleAvancer(gameInfos, new string[] { "", "random" });
 
                     // Met à jour les données du personnage après l'avoir déplacé
                     //gameInfos = db.getGameInfos(gameInfos.Game.Id);
@@ -328,9 +333,10 @@ namespace HarryPeloteur_BL.Controllers
             }
             // Met à jour la vie du personnage
             db.UpdatePersonne(gameInfos.Character);
+            return resultText;
         }
 
-        public void HandleRamasser(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
+        public string HandleRamasser(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
             HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
 
@@ -360,12 +366,21 @@ namespace HarryPeloteur_BL.Controllers
                     gameInfos.Character.Po += currentObject.Montant;
                     break;
             }
+            string returnText = (currentObject.Montant).ToString();
+            if (currentObject.Montant<0)
+            {
+                returnText = returnText + " " + currentObject.ProprieteCible;
+            }
+            if (currentObject.Montant > 0)
+            {
+                returnText = "+" + returnText + " " + currentObject.ProprieteCible;
+            }
 
             db.UpdatePersonne(gameInfos.Character);
-
+            return returnText;
         }
 
-        public void GenerateNewGame(string nomPerso, int difficultePartie)
+        public int GenerateNewGame(string nomPerso, int difficultePartie)
         {
             HarryPeloteur_DAL.PersonneDTO perso = new HarryPeloteur_DAL.PersonneDTO()
             {
@@ -401,6 +416,7 @@ namespace HarryPeloteur_BL.Controllers
             salle.Id = db.InsertSalle(salle);
             perso.SalleActuelle = salle.Id;
             db.UpdatePersonne(perso);
+            return partie.Id;
          }
 
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
@@ -615,4 +631,3 @@ namespace HarryPeloteur_BL.Controllers
         }
 
     }
-}
