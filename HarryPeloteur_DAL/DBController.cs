@@ -152,7 +152,24 @@ namespace HarryPeloteur_DAL
 
         public List<PartieDTO> GetParties()
         {
-            return new List<PartieDTO>();
+            string commande = "select * from texte where Id=" + type;
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
+            SqlDataReader reader = cmd1.ExecuteReader();
+
+            List<PartieDTO> gameList = new List<PartieDTO>();
+
+            while (reader.Read())
+            {
+                PartieDTO game = new PartieDTO();
+                game.Id = (int)reader.GetValue(0);
+                game.IdPersonnage = (int)reader.GetValue(1);
+                game.Difficulte = (int)reader.GetValue(2);
+
+                gameList.Add(game);
+            }
+
+            return gameList;
         }
         public string GetTexte(int type)
         {
