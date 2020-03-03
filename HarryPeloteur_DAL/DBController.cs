@@ -57,13 +57,12 @@ namespace HarryPeloteur_DAL
 
         public bool UpdatePersonne(PersonneDTO p)
         {
-            string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            SqlConnection con = new SqlConnection(conString);
-            con.Open();
             string q = "update personne set Nom =" + p.Nom +" ,Pv=" + p.Pv + " ,Force=" + p.Force + " ,Dexterite=" + p.Dexterite + " ,fuite=" + p.Fuite + " ,xp=" + p.Xp + ", po=" + p.Po + " where Id=" + p.Id;
-            SqlCommand cmd = new SqlCommand(q, con);
+            SqlCommand cmd = new SqlCommand(q, this.con);
+            
             cmd.ExecuteNonQuery();
-            con.Close();
+            
+            this.con.Close();
 
             return true;
         }
