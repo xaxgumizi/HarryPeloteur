@@ -152,7 +152,7 @@ namespace HarryPeloteur_DAL
 
         public List<PartieDTO> GetParties()
         {
-            string commande = "select * from texte where Id=" + type;
+            string commande = "select * from texte";
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
 
             SqlDataReader reader = cmd1.ExecuteReader();
