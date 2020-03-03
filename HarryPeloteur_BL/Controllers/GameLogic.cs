@@ -304,8 +304,9 @@ namespace HarryPeloteur_BL.Controllers
             var currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // Calcule la chance de s'échapper selon les caractéristiques du joueur et du monstre avec un minimum de 20%
-            //var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite) / Convert.ToSByte(gameInfos.Character.Fuite));
-            var escapeChance = 0.9;
+            double escapeChance = (double)(gameInfos.Character.Fuite - currentMonster.Dexterite);
+            escapeChance = escapeChance/(double)(gameInfos.Character.Fuite);
+            escapeChance = Math.Max(0.20, escapeChance);
 
             while (gameInfos.Character.Pv > 0)
             {
