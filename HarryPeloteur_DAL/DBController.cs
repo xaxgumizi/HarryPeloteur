@@ -27,12 +27,12 @@ namespace HarryPeloteur_DAL
         {
             return str.Split(' ').Select(n => Convert.ToInt32(n)).ToArray();
         }
-        public int InsertRoom(SalleDTO salle)
+        public int InsertRoom(SalleDTO room)
         {
-            string coordText = ArrayToString(salle.Coordonnees);
-            string portesText = ArrayToString(salle.Portes);
+            string coordText = ArrayToString(room.Coordonnees);
+            string portesText = ArrayToString(room.Portes);
 
-            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values('" + coordText + "'," + salle.IdContenu + "," + salle.TypeContenu + ",'" + portesText + "'," + salle.Etat + "," + salle.IdPartie + ") SELECT SCOPE_IDENTITY()";
+            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values('" + coordText + "'," + room.IdContenu + "," + room.TypeContenu + ",'" + portesText + "'," + room.Etat + "," + room.IdPartie + ") SELECT SCOPE_IDENTITY()";
             SqlCommand cmd = new SqlCommand(q, this.con);
 
             var newId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -41,12 +41,12 @@ namespace HarryPeloteur_DAL
 
             return newId;
         }
-        public void UpdateRoom(SalleDTO salle)
+        public void UpdateRoom(SalleDTO room)
         {
-            string coordText = ArrayToString(salle.Coordonnees);
-            string portesText = ArrayToString(salle.Portes);
+            string coordText = ArrayToString(room.Coordonnees);
+            string portesText = ArrayToString(room.Portes);
 
-            string q = "update salle set coordonnees ='" + coordText + "' ,id_contenu=" + salle.IdContenu + " ,type_contenu=" + salle.TypeContenu + " ,portes='" + portesText + "' ,etat=" + salle.Etat + ", id_partie=" + salle.IdPartie + " where Id=" + salle.Id;
+            string q = "update salle set coordonnees ='" + coordText + "' ,id_contenu=" + room.IdContenu + " ,type_contenu=" + room.TypeContenu + " ,portes='" + portesText + "' ,etat=" + room.Etat + ", id_partie=" + room.IdPartie + " where Id=" + room.Id;
             SqlCommand cmd = new SqlCommand(q, this.con);
             
             cmd.ExecuteNonQuery();
@@ -74,35 +74,52 @@ namespace HarryPeloteur_DAL
 
             SqlDataReader reader = cmd1.ExecuteReader();
 
-            SalleDTO salle = new SalleDTO();
+            SalleDTO room = new SalleDTO();
 
             while (reader.Read())
             {
-                salle.Id = (int)reader.GetValue(0);
+                room.Id = (int)reader.GetValue(0);
 
                 string coordText = (string)reader.GetValue(1);
-                salle.Coordonnees = StringToArray(coordText);
+                room.Coordonnees = StringToArray(coordText);
 
-                salle.IdContenu = (int)reader.GetValue(2);
+                room.IdContenu = (int)reader.GetValue(2);
 
-                salle.TypeContenu = (int)reader.GetValue(3);
+                room.TypeContenu = (int)reader.GetValue(3);
 
                 string portesText = (string)reader.GetValue(4); // par exemple si j'ai 1000 tabDoors[0]=0 , tabDoors[1]=0 ,tabDoors[2]=0 ,tabDoors[3]=1 , 
-                salle.Portes = StringToArray(portesText);
+                room.Portes = StringToArray(portesText);
 
-                salle.Etat = (int)reader.GetValue(5);
+                room.Etat = (int)reader.GetValue(5);
 
-                salle.IdPartie = (int)reader.GetValue(6);
+                room.IdPartie = (int)reader.GetValue(6);
             }
 
             this.con.Close();
 
-            return (salle);
+            return (room);
         }
 
         public List<SalleDTO> GetSalles(int gameId)
         {
-            return new List<SalleDTO>();
+            string commande = "select * from texte";
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
+            SqlDataReader reader = cmd1.ExecuteReader();
+
+            List<SalleDTO> roomList = new List<SalleDTO>();
+
+            while (reader.Read())
+            {
+                SalleDTO room = new SalleDTO();
+                room.Id = (int)reader.GetValue(0);
+                room.IdPersonnage = (int)reader.GetValue(1);
+                room.Difficulte = (int)reader.GetValue(2);
+
+                roomList.Add(room);
+            }
+
+            return roomList;
         }
 
         public PersonneDTO GetPersonne(int id)
