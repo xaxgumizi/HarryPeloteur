@@ -240,7 +240,6 @@ namespace HarryPeloteur_BL.Controllers
             double monsterHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)currentMonster.Dexterite - (double)gameInfos.Character.Dexterite) / (double)gameInfos.Character.Dexterite));
             // ajouter une fonction pour faire ça
             // diviser par deux l'augmentation de la chance ?
-            dt.VarDump(currentMonster);
             dt.dbg(gameInfos.Character.Dexterite.ToString());
             dt.dbg(currentMonster.Dexterite.ToString());
             dt.dbg((gameInfos.Character.Dexterite / currentMonster.Dexterite).ToString());
@@ -329,7 +328,6 @@ namespace HarryPeloteur_BL.Controllers
                     // Met à jour les données du personnage après l'avoir déplacé
                     //gameInfos = db.getGameInfos(gameInfos.Game.Id);
                     gameInfos.Character = db.GetPersonne(gameInfos.Character.Id);
-                    //dt.VarDump(gameInfos.Character);
 
                     break;
                 }
@@ -419,7 +417,6 @@ namespace HarryPeloteur_BL.Controllers
             
             salle.Id = db.InsertSalle(salle);
             perso.SalleActuelle = salle.Id;
-            dt.VarDump(perso);
             db.UpdatePersonne(perso);
 
             return partie.Id;
@@ -427,7 +424,6 @@ namespace HarryPeloteur_BL.Controllers
 
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
         {
-            dt.VarDump(gameInfos.Character);
             HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
             var endText = "";
             int champ = 0; // champ de texte traité 0:intro; 1:maintext; 2:outro;

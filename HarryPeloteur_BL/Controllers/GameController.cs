@@ -77,8 +77,6 @@ namespace HarryPeloteur_BL.Controllers
             int? ID = logicHandler.GenerateNewGame(name, difficulte);
 
             HarryPeloteur_DAL.GameInformationDTO gameInfos = db.GetGameInfos(ID);
-            dt.dbg("Info avant le generate:");
-            dt.VarDump(gameInfos.Character);
             var text = logicHandler.GenerateDisplayText(gameInfos);
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, text });
         }

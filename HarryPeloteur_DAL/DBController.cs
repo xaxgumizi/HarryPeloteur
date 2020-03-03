@@ -10,6 +10,10 @@ namespace HarryPeloteur_DAL
 {
     public class DBController
     {
+        static void Main(string[] args)
+        {
+
+        }
         public string contenu;
 
         private string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
@@ -293,7 +297,6 @@ namespace HarryPeloteur_DAL
             }
 
             this.con.Close();
-            VarDump(monster);
             return monster;
         }
 
