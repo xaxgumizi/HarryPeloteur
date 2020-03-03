@@ -192,7 +192,24 @@ namespace HarryPeloteur_DAL
 
         public MonstreDTO GetMonstre(int id)
         {
-            return new MonstreDTO();
+            string commande = "select * from monstre where Id=" + id;
+            SqlCommand cmd1 = new SqlCommand(commande, this.con);
+
+            SqlDataReader reader = cmd1.ExecuteReader();
+
+            MonstreDTO monster = new MonstreDTO();
+            while (reader.Read())
+            {
+                monster.Id = (int)reader.GetValue(0);
+                monster.Nom = (string)reader.GetValue(1);
+                monster.Pv = (int)reader.GetValue(2);
+                monster.Force = (int)reader.GetValue(3);
+                monster.Dexterite = (int)reader.GetValue(4);
+                monster.DropXp = (int)reader.GetValue(5);
+                monster.ProbaDropArgent = (float)reader.GetValue(6);
+            }
+
+            return monster;
         }
 
         public GameInformationDTO GetGameInfos(int id)
