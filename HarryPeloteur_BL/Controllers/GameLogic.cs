@@ -124,7 +124,7 @@ namespace HarryPeloteur_BL.Controllers
                     newRoom.Portes[oppposingDirections[direction]] = 1;
 
                     // On insère dans la BDD la nouvelle salle
-                    db.InsertRoom(newRoom);
+                    db.InsertSalle(newRoom);
 
                     // On récupère de nouveau les salles pour avoir l'Id de la salle que l'on vient d'insérer
                     gameInfos.Rooms = db.GetSalles(gameInfos.Game.Id);
@@ -165,11 +165,8 @@ namespace HarryPeloteur_BL.Controllers
             dt.dbg("Call to find room by coordinates");
             HarryPeloteur_DAL.SalleDTO found = null;
 
-            //dt.PrintArray(coordinates);
-
             foreach (HarryPeloteur_DAL.SalleDTO room in Rooms)
             {
-                //dt.PrintArray(room.Coordonnees);
                 if (room.Coordonnees[0] == coordinates[0] && room.Coordonnees[1] == coordinates[1])
                 {
                     found = room;
@@ -234,12 +231,10 @@ namespace HarryPeloteur_BL.Controllers
             HarryPeloteur_DAL.MonstreDTO currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // On détermine les chances de toucher en fonction de la dextérité
-            //double playerHitChance = 0.5 * Math.Pow((double)gameInfos.Character.Dexterite / (double)currentMonster.Dexterite, 2);
             double playerHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)gameInfos.Character.Dexterite - (double)currentMonster.Dexterite) / (double)currentMonster.Dexterite));
             double monsterHitChance = Math.Min(0.9, 0.5 + 0.5 * (((double)currentMonster.Dexterite - (double)gameInfos.Character.Dexterite) / (double)gameInfos.Character.Dexterite));
             // ajouter une fonction pour faire ça
             // diviser par deux l'augmentation de la chance ?
-            // mettre un plafond de 90%
             dt.VarDump(currentMonster);
             dt.dbg(gameInfos.Character.Dexterite.ToString());
             dt.dbg(currentMonster.Dexterite.ToString());

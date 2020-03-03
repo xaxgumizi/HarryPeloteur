@@ -27,7 +27,7 @@ namespace HarryPeloteur_DAL
         {
             return str.Split(' ').Select(n => Convert.ToInt32(n)).ToArray();
         }
-        public int InsertRoom(SalleDTO room)
+        public int InsertSalle(SalleDTO room)
         {
             string coordText = ArrayToString(room.Coordonnees);
             string portesText = ArrayToString(room.Portes);
@@ -41,7 +41,7 @@ namespace HarryPeloteur_DAL
 
             return newId;
         }
-        public void UpdateRoom(SalleDTO room)
+        public void UpdateSalle(SalleDTO room)
         {
             string coordText = ArrayToString(room.Coordonnees);
             string portesText = ArrayToString(room.Portes);
@@ -270,7 +270,14 @@ namespace HarryPeloteur_DAL
 
         public int InsertPersonne(PersonneDTO perso)
         {
-            throw new NotImplementedException();
+            string q = "insert into personnage(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values('" + coordText + "'," + room.IdContenu + "," + room.TypeContenu + ",'" + portesText + "'," + room.Etat + "," + room.IdPartie + ") SELECT SCOPE_IDENTITY()";
+            SqlCommand cmd = new SqlCommand(q, this.con);
+
+            var newId = Convert.ToInt32(cmd.ExecuteScalar());
+
+            this.con.Close();
+
+            return newId;
         }
 
         public int InsertPartie(PartieDTO partie)
@@ -278,9 +285,5 @@ namespace HarryPeloteur_DAL
             throw new NotImplementedException();
         }
 
-        public int InsertSalle(SalleDTO salle)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
