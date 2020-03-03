@@ -138,16 +138,16 @@ namespace HarryPeloteur_DAL
 
             SqlDataReader reader = cmd1.ExecuteReader();
 
-            PartieDTO partie = new PartieDTO();
+            PartieDTO game = new PartieDTO();
             while (reader.Read())
             {
-                partie.Id = (int)reader.GetValue(0);
-                partie.IdPersonnage = (int)reader.GetValue(1);
-                partie.Difficulte = (int)reader.GetValue(2);
+                game.Id = (int)reader.GetValue(0);
+                game.IdPersonnage = (int)reader.GetValue(1);
+                game.Difficulte = (int)reader.GetValue(2);
             }
 
             this.con.Close();
-            return (partie);
+            return (game);
         }
 
         public List<PartieDTO> GetParties()
