@@ -214,6 +214,10 @@ namespace HarryPeloteur_DAL
 
         public GameInformationDTO GetGameInfos(int id)
         {
+            GameInformationDTO gameInfos = new GameInformationDTO();
+            gameInfos.Game = this.GetPartie(id);
+            gameInfos.Character = this.GetPersonne(gameInfos.Game.Id);
+            gameInfos.Rooms = this.GetSalles(gameInfos.Game.Id);
             return new GameInformationDTO();
         }
     }
