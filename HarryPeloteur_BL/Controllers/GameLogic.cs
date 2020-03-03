@@ -25,9 +25,9 @@ namespace HarryPeloteur_BL.Controllers
         {
             string resultText = "";
             dt.dbg("Call to avancer");
-            if(parameters.Count() < 2)
+            if (parameters.Count() < 2)
             {
-                return;
+                return "Pas assez d'arguments";
             }
             int direction = -1;
             switch (parameters[1])
@@ -48,7 +48,7 @@ namespace HarryPeloteur_BL.Controllers
                     direction = 4;
                     break;
                 default:
-                    return;
+                    return "Erreur de paramètre";
             }
 
             HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
@@ -56,7 +56,7 @@ namespace HarryPeloteur_BL.Controllers
             if (currentRoom.TypeContenu == 2 && currentRoom.Etat == 0)
             {
                 dt.dbg("Mode combat déplacement impossible");
-                return;
+                return "Mode combat déplacement impossible";
             }
 
             // Si il faut tirer une direction au hasard, pour une Fuite par exemple
@@ -142,7 +142,7 @@ namespace HarryPeloteur_BL.Controllers
             else // Sinon on ne peut pas aller là
             {
                 dt.dbg("Pas de porte dans la direction choisie");
-                return;
+                return "Pas de porte dans la direction choisie";
             }
         }
 
@@ -178,7 +178,7 @@ namespace HarryPeloteur_BL.Controllers
 
             return found;
         }
-        
+
         /* Génère une nouvelle salle avec des attributs aléatoires
          */
         public HarryPeloteur_DAL.SalleDTO GenerateNewRoom()
@@ -197,7 +197,7 @@ namespace HarryPeloteur_BL.Controllers
                     contentId = randomObject.Next();
                     break;
                 case 2: // Il y a un monstre
-                    var randomMonster = new LoadedDie(new int[] { 10, 10, 10, 10, 20, 20, 9, 9, 2}); // voir table des monstres
+                    var randomMonster = new LoadedDie(new int[] { 10, 10, 10, 10, 20, 20, 9, 9, 2 }); // voir table des monstres
                     contentId = randomMonster.Next();
                     break;
             }
@@ -227,7 +227,7 @@ namespace HarryPeloteur_BL.Controllers
             if (currentRoom.TypeContenu != 2)
             {
                 dt.dbg("Impossible de combattre dans une salle sans monstres");
-                return;
+                return "Impossible de combattre dans une salle sans monstres";
             }
 
             HarryPeloteur_DAL.MonstreDTO currentMonster = db.GetMonstre(currentRoom.IdContenu);
@@ -252,7 +252,7 @@ namespace HarryPeloteur_BL.Controllers
                 // Mettre la personne qui ouvre le combat en aléatoire ?
                 double draw = rnd.NextDouble();
                 // Le joueur touche
-                if(draw < playerHitChance)
+                if (draw < playerHitChance)
                 {
                     dt.dbg("Le joueur a touché le monstre");
                     currentMonster.Pv -= gameInfos.Character.Force;
@@ -261,15 +261,15 @@ namespace HarryPeloteur_BL.Controllers
                 // Au tour du monstre
                 draw = rnd.NextDouble();
                 // Le monstre touche
-                if(draw < monsterHitChance)
+                if (draw < monsterHitChance)
                 {
                     dt.dbg("Le monstre a touché le joueur");
                     gameInfos.Character.Pv -= currentMonster.Force;
                 }
-                
+
             }
 
-            if(gameInfos.Character.Pv <= 0)
+            if (gameInfos.Character.Pv <= 0)
             {
                 dt.dbg("Le joueur est mort tué par un " + currentMonster.Nom);
                 resultText = "Le joueur est mort tué par un " + currentMonster.Nom;
@@ -295,7 +295,7 @@ namespace HarryPeloteur_BL.Controllers
             if (currentRoom.TypeContenu != 2)
             {
                 dt.dbg("Impossible de fuir une salle sans monstres");
-                return;
+                return "Impossible de fuir une salle sans monstres";
             }
 
             // On obtient le monstre dans la salle actuelle
@@ -304,8 +304,8 @@ namespace HarryPeloteur_BL.Controllers
             // Calcule la chance de s'échapper selon les caractéristiques du joueur et du monstre avec un minimum de 20%
             //var escapeChance = Math.Max(0.20, (gameInfos.Character.Fuite - currentMonster.Dexterite) / Convert.ToSByte(gameInfos.Character.Fuite));
             var escapeChance = 0.9;
-            
-            while(gameInfos.Character.Pv > 0)
+
+            while (gameInfos.Character.Pv > 0)
             {
                 // Si on n'a pas réussi à s'échapper
                 if (rnd.NextDouble() > escapeChance)
@@ -321,7 +321,7 @@ namespace HarryPeloteur_BL.Controllers
                     resultText = "Le joueur a réussi à s'échapper";
                     // modifier l'état de la salle actuelle vers un état intermédiaire pour passer le check dans le handleavancer
                     gameInfos.Rooms[currentRoomID].Etat = 2;
-                    resultText+=HandleAvancer(gameInfos, new string[] { "", "random" });
+                    resultText += HandleAvancer(gameInfos, new string[] { "", "random" });
 
                     // Met à jour les données du personnage après l'avoir déplacé
                     //gameInfos = db.getGameInfos(gameInfos.Game.Id);
@@ -343,7 +343,7 @@ namespace HarryPeloteur_BL.Controllers
             if (currentRoom.TypeContenu != 1)
             {
                 dt.dbg("Pas d'objet à ramasser dans la salle !");
-                return;
+                return "Pas d'objet à ramasser dans la salle !";
             }
 
             HarryPeloteur_DAL.ObjetDTO currentObject = db.GetObjet(currentRoom.IdContenu);
@@ -367,7 +367,7 @@ namespace HarryPeloteur_BL.Controllers
                     break;
             }
             string returnText = (currentObject.Montant).ToString();
-            if (currentObject.Montant<0)
+            if (currentObject.Montant < 0)
             {
                 returnText = returnText + " " + currentObject.ProprieteCible;
             }
@@ -380,7 +380,7 @@ namespace HarryPeloteur_BL.Controllers
             return returnText;
         }
 
-        public int GenerateNewGame(string nomPerso, int difficultePartie)
+        public int? GenerateNewGame(string nomPerso, int difficultePartie)
         {
             HarryPeloteur_DAL.PersonneDTO perso = new HarryPeloteur_DAL.PersonneDTO()
             {
@@ -396,14 +396,14 @@ namespace HarryPeloteur_BL.Controllers
             };
             perso.Id = db.InsertPersonne(perso);
 
-            HarryPeloteur_DAL.PartieDTO partie = new HarryPeloteur_DAL.PartieDTO() 
+            HarryPeloteur_DAL.PartieDTO partie = new HarryPeloteur_DAL.PartieDTO()
             {
                 Id = 0,
                 IdPersonnage = perso.Id,
                 Difficulte = difficultePartie
             };
             partie.Id = db.InsertPartie(partie);
-            HarryPeloteur_DAL.SalleDTO salle = new HarryPeloteur_DAL.SalleDTO() 
+            HarryPeloteur_DAL.SalleDTO salle = new HarryPeloteur_DAL.SalleDTO()
             {
                 Id = 0,
                 IdPartie = partie.Id,
@@ -417,7 +417,7 @@ namespace HarryPeloteur_BL.Controllers
             perso.SalleActuelle = salle.Id;
             db.UpdatePersonne(perso);
             return partie.Id;
-         }
+        }
 
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
         {
@@ -631,3 +631,4 @@ namespace HarryPeloteur_BL.Controllers
         }
 
     }
+}
