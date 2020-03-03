@@ -267,5 +267,20 @@ namespace HarryPeloteur_DAL
             gameInfos.Rooms = this.GetSalles(gameInfos.Game.Id);
             return new GameInformationDTO();
         }
+
+        public int InsertPersonne(PersonneDTO perso)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int InsertPartie(PartieDTO partie)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int InsertSalle(SalleDTO salle)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
