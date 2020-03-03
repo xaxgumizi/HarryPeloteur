@@ -61,12 +61,26 @@ namespace HarryPeloteur_BL.Controllers
 
             }
 
-
-
             gameInfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
 
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, texts });
         }
+
+        [Route("newGame")]
+        public HttpResponseMessage PostNewGame(int id, [FromBody](string) characterInfos)
+        {
+            System.Diagnostics.Debug.WriteLine(characterInfos);
+
+            string name = characterInfos.Substring(characterInfos.length() - 1);
+            int difficulte = Int32.Parse(characterInfos.Substring(0,characterInfos.length()-1));
+            
+            int ID = HarryPeloteur_BL.Controllers.GameLogic.GenerateNewGame(name, difficulte);
+            var gameInfos = db.GetGameInfos(ID);
+
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos });
+        }
+
+
     }
 }

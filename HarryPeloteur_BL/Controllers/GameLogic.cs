@@ -369,7 +369,7 @@ namespace HarryPeloteur_BL.Controllers
 
         }
 
-        public void GenerateNewGame(string nomPerso, int difficultePartie)
+        public int GenerateNewGame(string nomPerso, int difficultePartie)
         {
             HarryPeloteur_DAL.PersonneDTO perso = new HarryPeloteur_DAL.PersonneDTO()
             {
@@ -405,6 +405,7 @@ namespace HarryPeloteur_BL.Controllers
             salle.ID = HarryPeloteur_DAL.DBController.InsertSalle(salle);
             perso.SalleActuelle = salle.ID;
             HarryPeloteur_DAL.DBController.UpdatePersonne(perso);
+            return partie.ID;
          }
 
         public dynamic GenerateDisplayText(HarryPeloteur_DAL.GameInformationDTO gameInfos)
