@@ -38,7 +38,7 @@ namespace HarryPeloteur_BL.Controllers
             System.Diagnostics.Debug.WriteLine(command);
 
             var gameInfos = db.GetGameInfos(id); // Obtient les informations actuelles sur la partie
-
+            string resultText = "";
             string[] parameters = command.Split(' ');
             if (parameters.Length > 0)
             {
@@ -46,41 +46,42 @@ namespace HarryPeloteur_BL.Controllers
                 switch (action)
                 {
                     case "avancer": // Gére le déplacement du personnage
-                        logicHandler.HandleAvancer(gameInfos, parameters);
+                        resultText = logicHandler.HandleAvancer(gameInfos, parameters);
                         break;
                     case "combattre": // Gére le combat
-                        logicHandler.HandleCombattre(gameInfos, parameters);
+                        resultText = logicHandler.HandleCombattre(gameInfos, parameters);
                         break;
                     case "fuir": // Gére la fuite
-                        logicHandler.HandleFuir(gameInfos, parameters);
+                        resultText = logicHandler.HandleFuir(gameInfos, parameters);
                         break;
                     case "ramasser": // Gère le fait de ramasser un objet
-                        logicHandler.HandleRamasser(gameInfos, parameters);
+                        resultText = logicHandler.HandleRamasser(gameInfos, parameters);
                         break;
                 }
 
             }
 
             gameInfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
+            var text = logicHandler.GenerateDisplayText(gameInfos);
+            text.add(resultText);
 
-
-            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, texts });
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, text });
         }
 
         [Route("newGame")]
-        public HttpResponseMessage PostNewGame(int id, [FromBody](string) characterInfos)
+        public HttpResponseMessage PostNewGame(int id, [FromBody]string characterInfos)
         {
             System.Diagnostics.Debug.WriteLine(characterInfos);
 
             string name = characterInfos.Substring(characterInfos.length() - 1);
             int difficulte = Int32.Parse(characterInfos.Substring(0,characterInfos.length()-1));
             
-            int ID = HarryPeloteur_BL.Controllers.GameLogic.GenerateNewGame(name, difficulte);
-            var gameInfos = db.GetGameInfos(ID);
-
-            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos });
+            int ID = logicHandler.GenerateNewGame(name, difficulte);
+            HarryPeloteur_DAL.GameInformationDTO gameInfos = db.GetGameInfos(ID);
+            var text = logicHandler.GenerateDisplayText;
+            return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos, text });
         }
-
+        
 
     }
 }
