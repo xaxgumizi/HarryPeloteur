@@ -32,7 +32,7 @@ namespace HarryPeloteur_DAL
             string coordText = ArrayToString(salle.Coordonnees);
             string portesText = ArrayToString(salle.Portes);
 
-            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values('" + coordText + "'," + salle.id_contenu + "," + salle.type_contenu + ",'" + portesText + "'," + salle.etat + "," + salle.id_partie + ") SELECT SCOPE_IDENTITY()";
+            string q = "insert into salle(coordonnees,id_contenu,type_contenu,portes,etat,id_partie) values('" + coordText + "'," + salle.IdContenu + "," + salle.TypeContenu + ",'" + portesText + "'," + salle.Etat + "," + salle.IdPartie + ") SELECT SCOPE_IDENTITY()";
             SqlCommand cmd = new SqlCommand(q, this.con);
 
             var newId = Convert.ToInt32(cmd.ExecuteScalar());
