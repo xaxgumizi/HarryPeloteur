@@ -248,14 +248,11 @@ namespace HarryPeloteur_DAL
             SqlDataReader reader = cmd1.ExecuteReader();
 
             List<string> texts = new List<string> { };
-            System.Diagnostics.Debug.WriteLine("type de texte demandé: " + type.ToString());
             while (reader.Read())
             {
-                System.Diagnostics.Debug.WriteLine((string)reader.GetValue(2));
                 texts.Add((string)reader.GetValue(2));
             }
 
-            VarDump(texts);
             int r = rnd.Next(texts.Count);
             string text = texts[r];
 

@@ -186,7 +186,7 @@ namespace HarryPeloteur_BL.Controllers
          */
         public HarryPeloteur_DAL.SalleDTO GenerateNewRoom()
         {
-            var randomContentTypeGenerator = new LoadedDie(new int[] { 50, 25, 25 }); // 50% rien, 25% objet, 25% monstre
+            var randomContentTypeGenerator = new LoadedDie(new int[] { 40, 30, 30 }); // 50% rien, 25% objet, 25% monstre
             var contentType = randomContentTypeGenerator.Next();
 
             var contentId = 0;
@@ -394,11 +394,11 @@ namespace HarryPeloteur_BL.Controllers
                 Id = 0,
                 SalleActuelle = 0,
                 Nom = nomPerso,
-                Pv = 10,
-                Force = 10,
-                Fuite = 10,
-                Dexterite = 10,
-                Xp = 10,
+                Pv = 1000,
+                Force = 20,
+                Fuite = 20,
+                Dexterite = 20,
+                Xp = 1,
                 Po = 10
             };
             perso.Id = db.InsertPersonne(perso);

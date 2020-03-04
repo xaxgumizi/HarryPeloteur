@@ -43,23 +43,29 @@ namespace HarryPeloteur_BL.Controllers
             string[] parameters = command.Split(' ');
             if (parameters.Length > 0)
             {
-                string action = parameters[0];
-                switch (action)
+                if (gameInfos.Character.Pv > 0)
                 {
-                    case "avancer": // Gére le déplacement du personnage
-                        resultText = logicHandler.HandleAvancer(gameInfos, parameters);
-                        break;
-                    case "combattre": // Gére le combat
-                        resultText = logicHandler.HandleCombattre(gameInfos, parameters);
-                        break;
-                    case "fuir": // Gére la fuite
-                        resultText = logicHandler.HandleFuir(gameInfos, parameters);
-                        break;
-                    case "ramasser": // Gère le fait de ramasser un objet
-                        resultText = logicHandler.HandleRamasser(gameInfos, parameters);
-                        break;
+                    string action = parameters[0];
+                    switch (action)
+                    {
+                        case "avancer": // Gére le déplacement du personnage
+                            resultText = logicHandler.HandleAvancer(gameInfos, parameters);
+                            break;
+                        case "combattre": // Gére le combat
+                            resultText = logicHandler.HandleCombattre(gameInfos, parameters);
+                            break;
+                        case "fuir": // Gére la fuite
+                            resultText = logicHandler.HandleFuir(gameInfos, parameters);
+                            break;
+                        case "ramasser": // Gère le fait de ramasser un objet
+                            resultText = logicHandler.HandleRamasser(gameInfos, parameters);
+                            break;
+                    }
                 }
-
+                else
+                {
+                    resultText = "Vous êtes mort Game Over";
+                }
             }
 
             gameInfos = db.GetGameInfos(id); // Obtient les nouvelles infos après que le handler les ait modifiés
