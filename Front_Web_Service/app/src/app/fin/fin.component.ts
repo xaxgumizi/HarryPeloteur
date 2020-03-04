@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-fin',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FinComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
   }
+
+  demarre(): void{
+    this.router.navigate([''])
+  }
+
 
 }

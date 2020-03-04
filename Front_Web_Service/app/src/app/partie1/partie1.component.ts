@@ -23,8 +23,8 @@ export class Partie1Component implements OnInit {
  
   ngOnInit() {
     this.Form = this.fb.group({  // Crée une instance de FormGroup
-      username: [],                   // Crée une instance de FormControl
-      difficulte: [],                   // Crée une instance de FormControl
+      username: [],              // Crée une instance de FormControl
+      difficulte: [],            // Crée une instance de FormControl
     });
   }
 

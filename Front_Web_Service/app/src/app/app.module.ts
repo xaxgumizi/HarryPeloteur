@@ -38,6 +38,7 @@ import { FinComponent } from './fin/fin.component'
       {path:'listParties',component: ListPartiesComponent},
       {path: 'partie11',component: Partie11Component},
       {path: 'partie12',component: Partie12Component},
+      {path: 'fin',component: FinComponent},
     ])
   ],
   providers: [],

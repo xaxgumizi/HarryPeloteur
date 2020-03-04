@@ -14,7 +14,7 @@ export class Partie11Component implements OnInit {
 
   constructor(private httpService: HttpClient, private router: Router, public restApi:RestApiService) { }
 
-  id = 38;
+  id = 37;
   taille: number =  2 ;
   games: string[]; 
   gameInfos: string[];
@@ -34,7 +34,7 @@ export class Partie11Component implements OnInit {
     if(this.body=="debut"){
       console.log(this.body);
         this.url = 'https://localhost:44344/api/game/'+this.id;
-        this.body = '"avancer haut"';
+        this.body = '"avancer"';
         const head = new HttpHeaders().set('Content-Type', 'application/json');
         this.httpService.put(this.url,this.body,{headers:head}).
         subscribe(  
@@ -99,8 +99,8 @@ export class Partie11Component implements OnInit {
   }
 
   Avancer(): void{
-    this.body = '"avancer"';
-    this.router.navigate(['/partie12']);
+      this.body = '"avancer"';
+      this.router.navigate(['/partie12']);
   }
 
   Combattre(): void{
@@ -110,7 +110,10 @@ export class Partie11Component implements OnInit {
       this.text = this.games['resultText'];
       this.actions = this.t['actionsPossibles'];
       this.endText = this.t['endText'];
-      this.router.navigate(['/partie11'])
+      if(this.character['Pv'] < 0)
+        this.router.navigate(['/fin'])
+      else
+        this.router.navigate(['/partie11'])
     })
     
   }

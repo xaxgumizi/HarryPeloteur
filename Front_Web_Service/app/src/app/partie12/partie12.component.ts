@@ -106,7 +106,10 @@ export class Partie12Component implements OnInit {
       this.text = this.games['resultText'];
       this.actions = this.t['actionsPossibles'];
       this.endText = this.t['endText'];
-      this.router.navigate(['/partie12'])
+      if(this.character['Pv'] < 0)
+        this.router.navigate(['/fin'])
+      else
+        this.router.navigate(['/partie12'])
     })
   }
 
