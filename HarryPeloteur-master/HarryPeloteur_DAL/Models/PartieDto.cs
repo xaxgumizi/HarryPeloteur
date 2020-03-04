@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HarryPeloteur_DAL
+{
+    public class PartieDTO
+    {
+        public int? Id { get; set; }
+        public int? IdPersonnage { get; set; }
+        public int? Difficulte { get; set; }
+    }
+}

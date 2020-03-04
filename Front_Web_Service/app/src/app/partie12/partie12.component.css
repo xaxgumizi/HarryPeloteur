@@ -1,0 +1,29 @@
+.image{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    
+}
+
+button{
+    margin:3px;
+}
+
+
+.container{ 
+    margin: auto; /* Important */ 
+    text-align: center; 
+}
+
+canvas.solide{
+    border-style: solid;
+}
+
+.column {
+    float: left;
+    width:33.33%;
+    padding: 10px;
+    height: 300px;
+}
+  
