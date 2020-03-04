@@ -18,6 +18,7 @@ namespace HarryPeloteur_DAL
 
         private string conString = "Data Source=isimadba.database.windows.net;Initial Catalog=IsimaDatabase;User ID=isimadba;Password=tvilum?00;Connect Timeout=60;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         private SqlConnection con;
+        Random rnd = new Random();
         public DBController()
         {
             con = new SqlConnection(conString);
@@ -240,18 +241,25 @@ namespace HarryPeloteur_DAL
         public string GetTexte(int? type)
         {
             this.con.Open();
-            string commande = "select * from texte where Id=" + type;
+            string commande = "select * from texte where type=" + type;
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
 
             SqlDataReader reader = cmd1.ExecuteReader();
-            
-            while(reader.Read())
+
+            List<string> texts = new List<string> { };
+            System.Diagnostics.Debug.WriteLine("type de texte demandé: " + type.ToString());
+            while (reader.Read())
             {
-                string contenu = (string)reader.GetValue(2);
+                System.Diagnostics.Debug.WriteLine((string)reader.GetValue(2));
+                texts.Add((string)reader.GetValue(2));
             }
 
+            VarDump(texts);
+            int r = rnd.Next(texts.Count);
+            string text = texts[r];
+
             this.con.Close();
-            return contenu;
+            return text;
         }
 
         public ObjetDTO GetObjet(int? id)

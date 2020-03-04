@@ -301,7 +301,7 @@ namespace HarryPeloteur_BL.Controllers
             }
 
             // On obtient le monstre dans la salle actuelle
-            var currentMonster = db.GetMonstre(currentRoom.IdContenu);
+            HarryPeloteur_DAL.MonstreDTO currentMonster = db.GetMonstre(currentRoom.IdContenu);
 
             // Calcule la chance de s'échapper selon les caractéristiques du joueur et du monstre avec un minimum de 20%
             double escapeChance = (double)(gameInfos.Character.Fuite - currentMonster.Dexterite);
