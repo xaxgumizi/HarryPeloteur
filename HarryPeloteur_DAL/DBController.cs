@@ -173,6 +173,7 @@ namespace HarryPeloteur_DAL
         {
             this.con.Open();
             string commande = "select * from personne where Id=" + id;
+            System.Diagnostics.Debug.WriteLine("Execution de la requête: " + commande);
             SqlCommand cmd1 = new SqlCommand(commande, this.con);
             SqlDataReader reader = cmd1.ExecuteReader();
 

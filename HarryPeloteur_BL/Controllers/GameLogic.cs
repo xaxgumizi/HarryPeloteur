@@ -278,8 +278,12 @@ namespace HarryPeloteur_BL.Controllers
             }
             else
             {
+                
                 dt.dbg("Le joueur a tué un " + currentMonster.Nom);
                 resultText = "Vous avez tué un " + currentMonster.Nom;
+
+                currentRoom.TypeContenu = 0;
+                db.UpdateSalle(currentRoom);
             }
 
             // On met à jour la vie du joueur
@@ -338,6 +342,11 @@ namespace HarryPeloteur_BL.Controllers
             return resultText;
         }
 
+        private int? increaseByPercentage(int? value, int? percentage)
+        {
+            return (int?)Math.Round((double)value + ((double)value * ((double)percentage / 100.0)));
+        }
+
         public string HandleRamasser(HarryPeloteur_DAL.GameInformationDTO gameInfos, string[] parameters)
         {
             HarryPeloteur_DAL.SalleDTO currentRoom = FindRoomById(gameInfos.Rooms, gameInfos.Character.SalleActuelle).found;
@@ -353,31 +362,27 @@ namespace HarryPeloteur_BL.Controllers
             switch (currentObject.ProprieteCible)
             {
                 case "pv":
-                    gameInfos.Character.Pv += currentObject.Montant;
+                    gameInfos.Character.Pv = this.increaseByPercentage(gameInfos.Character.Pv, currentObject.Montant);
                     break;
                 case "force":
-                    gameInfos.Character.Force += currentObject.Montant;
+                    gameInfos.Character.Force = this.increaseByPercentage(gameInfos.Character.Force, currentObject.Montant);
                     break;
                 case "fuite":
-                    gameInfos.Character.Fuite += currentObject.Montant;
+                    gameInfos.Character.Fuite = this.increaseByPercentage(gameInfos.Character.Fuite, currentObject.Montant);
                     break;
                 case "dexterite":
-                    gameInfos.Character.Dexterite += currentObject.Montant;
+                    gameInfos.Character.Dexterite = this.increaseByPercentage(gameInfos.Character.Dexterite, currentObject.Montant);
                     break;
                 case "po":
                     gameInfos.Character.Po += currentObject.Montant;
                     break;
             }
-            string returnText = (currentObject.Montant).ToString();
-            if (currentObject.Montant < 0)
-            {
-                returnText = returnText + " " + currentObject.ProprieteCible;
-            }
-            if (currentObject.Montant > 0)
-            {
-                returnText = "+" + returnText + " " + currentObject.ProprieteCible;
-            }
 
+            string returnText = "Vous avez ramasé " + currentObject.Nom + " (" + currentObject.Description + ")";
+
+            currentRoom.TypeContenu = 0;
+
+            db.UpdateSalle(currentRoom);
             db.UpdatePersonne(gameInfos.Character);
             return returnText;
         }
@@ -503,7 +508,7 @@ namespace HarryPeloteur_BL.Controllers
                             break;
                         case 2:
                             actionsPossibles.Add(codeRetour[20]);
-                            actionsPossibles.Add(codeRetour[20]);
+                            actionsPossibles.Add(codeRetour[21]);
                             break;
                     }
                     break;

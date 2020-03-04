@@ -18,8 +18,9 @@ namespace HarryPeloteur_BL.Controllers
         GameLogic logicHandler = new GameLogic(); // La logique du jeu
 
         [Route("game/{id}")]
-        public HttpResponseMessage GetGame(int id) // https://localhost:44344/api/game/character?id=12
+        public HttpResponseMessage GetGame(int id)
         {
+            System.Diagnostics.Debug.WriteLine("Demande d'info pour la partie: " + id.ToString());
             var gameInfos = db.GetGameInfos(id);
 
             return ControllerContext.Request.CreateResponse(HttpStatusCode.OK, new { gameInfos });
